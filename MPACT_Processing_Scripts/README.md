@@ -49,7 +49,7 @@ and total q-bar source) and by material which the negativity took place in.
 will be produced here.  As such, it is possible that some negative component of
 the source did not contribute to the negative total source.
 
-The resulting table will look like
+The resulting table will look like:
 ```
 Running: cli2.8.0 -nowin -s MPACT_VTK_File_Find_Zero_Source.py
 Running: viewer2.8.0 -noint -nowin -host 127.0.0.1 -port 5600
@@ -71,9 +71,9 @@ Total: 504 Entries
 |         5         |                   |         3         |                   |                   |
 |         6         |                   |         3         |                   |                   |
 |         7         |                   |         3         |                   |                   |
-.
-.
-.
+          .
+          .
+          .
 |        47         |                   |         3         |                   |                   |
 -----------------------------------------------------------------------------------------------------
 ```
