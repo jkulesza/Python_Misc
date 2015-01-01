@@ -24,8 +24,8 @@ MPACT_VTK_File_Plot_Negative_Qbar_By_Material.py
 ------------------------------------------------
 
 This script will read a VTK file produced by MPACT and look for
-iteratively-printed edits for qbar of the form ```qbarggg########``` where ggg
-is the energy group number leftpadded with underscores and ######## is the
+iteratively-printed edits for qbar of the form ```qbarggg########``` where ```ggg```
+is the energy group number leftpadded with underscores and ```########``` is the
 subiteration count leftpadded with underscores.
 
 This script will then produce plots, by material (as specified in the script) of
@@ -37,8 +37,8 @@ MPACT_VTK_File_Find_Zero_Source.py
 ----------------------------------
 
 This script will read a VTK file produced by MPACT and look for
-iteratively-printed edits for qbar of the form ```qbarggg########``` where ggg
-is the energy group number leftpadded with underscores and ######## is the
+iteratively-printed edits for qbar of the form ```qbarggg########``` where ```ggg```
+is the energy group number leftpadded with underscores and ```########``` is the
 subiteration count leftpadded with underscores.
 
 This script will then produce an ASCII table by energy group for each negative
