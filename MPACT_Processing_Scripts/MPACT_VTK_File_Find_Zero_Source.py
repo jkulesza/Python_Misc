@@ -2,12 +2,12 @@
 # IMPORT PACKAGES ##############################################################
 
 import subprocess
+import sys
 import re
 
 # DEFINE CONSTANTS #############################################################
 
 MAXGRPS = 47
-infile = "simple_case_TCP0_47g-Pn_core_FSRmesh.vtk"
 
 matdict = {}
 matdict[5] = "mat_1_fuel"
@@ -34,6 +34,12 @@ def getlist(infile, scalar_str):
  
 # EXECUTE PROGRAM ##############################################################
 
+try:
+    infile = sys.argv[1]
+except:
+    print "Error: No VTK file defined in ARGV"
+    exit()
+ 
 matarray = getarray(infile,"material_table"); matarray = map(int, matarray)
 print("Length of material array: " + str(len(matarray)))
 

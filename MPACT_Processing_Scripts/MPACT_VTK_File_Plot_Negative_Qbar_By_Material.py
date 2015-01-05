@@ -2,12 +2,12 @@
 # IMPORT PACKAGES ##############################################################
 
 import subprocess
+import sys
 import re
 
 # DEFINE CONSTANTS #############################################################
 
 MAXGRPS = 47
-infile = "simple_case_TCP0_47g-Pn_core_FSRmesh.vtk"
 
 matdict = {}
 matdict[5] = "mat_1_fuel"
@@ -35,6 +35,12 @@ def getsublist(inlist):
 
 # EXECUTE PROGRAM ##############################################################
 
+try:
+    infile = sys.argv[1]
+except:
+    print "Error: No VTK file defined in ARGV"
+    exit()
+ 
 # Collect all VTK SCALAR entries corresponding to negative sources.
 nextlist = getlist(infile,"next")
 nssslist = getlist(infile,"nsss")
