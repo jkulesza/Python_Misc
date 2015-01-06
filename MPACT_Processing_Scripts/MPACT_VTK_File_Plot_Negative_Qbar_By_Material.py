@@ -30,6 +30,14 @@ def getlist(infile, scalar_str):
     while '' in cmdlist: cmdlist.remove('')  
     return cmdlist
 
+# Get group number from label.
+def getlabelgrp(label):
+    return int(re.sub("_","",label[4:7]))
+
+# Get iteration from label.
+def getlabelitr(label):
+    return int(re.sub("_","",label[7:]))
+
 # Get final iteration entries from the list of negative source (or source
 # components). 
 def getsublist(inlist):
@@ -39,6 +47,25 @@ def getsublist(inlist):
             if(int(re.sub("_","",i[4:7])) >= int(re.sub("_","",inlist[n+1][4:7]))):
                 listn = n + 1
     return inlist[listn:] 
+
+# Check to determine if a given negative qbar entry is the converged (final
+# iteration) value relative to another source component array.
+def checkfinalentry(inlist,comparelist):
+    finlist = []
+    for i in inlist:
+        lastiter = True
+        for j in comparelist:
+            # If the component of the source for a given group has a higher
+            # iteration number than what is believed to be the last iteration of
+            # the total source for that group, it is NOT the total source for
+            # that group and should not be included.
+            if(getlabelgrp(j) == getlabelgrp(i) and
+               getlabelitr(j) >  getlabelitr(i)):
+                lastiter = False
+        if(lastiter):
+            finlist.append(i)
+
+    return finlist
 
 # Parse VTK file to get array values.
 def getarray(infile,arrayname):
@@ -83,9 +110,16 @@ print("Total: " + str(len(nextlist)+len(nssslist)+len(nstrlist)+len(qbarlist)) +
 #if(len(nstrlist) > 0): nstrlist = getsublist(nstrlist); print(nstrlist)
 
 if(len(qbarlist) > 0): 
-    qbarlist = getsublist(qbarlist); 
+    qbarlist = getsublist(qbarlist)
+    # Check to ensure that qbar is truly last value for all iterations for a
+    # given group.
+    if(len(nextlist) > 0): qbarlist = checkfinalentry(qbarlist,nextlist) 
+    if(len(nssslist) > 0): qbarlist = checkfinalentry(qbarlist,nssslist) 
+    if(len(nstrlist) > 0): qbarlist = checkfinalentry(qbarlist,nstrlist) 
     print("Final Iteration Negative Sources: ")
     print(qbarlist)
+
+exit()
 
 # PERFORM VTK PLOTTING #########################################################
 
