@@ -10,10 +10,16 @@ import re
 MAXGRPS = 47
 
 matdict = {}
-matdict[5] = "mat_1_fuel"
-matdict[6] = "mat_2_moderator"
-matdict[7] = "mat_3_baffle"
 
+#matdict[5]  = "mat_1_fuel"
+#matdict[6]  = "mat_2_moderator"
+#matdict[7]  = "mat_3_baffle"
+
+matdict[6]  = "mat_1_fuel"
+matdict[7]  = "mat_2_clad"
+matdict[8]  = "mat_7_moderator"
+matdict[9]  = "mat_39_gap"
+ 
 # DEFINE FUNCTIONS #############################################################
 
 # Parse VTK file to segregate negative source components.
@@ -24,6 +30,8 @@ def getlist(infile, scalar_str):
     while '' in cmdlist: cmdlist.remove('')  
     return cmdlist
 
+# Get final iteration entries from the list of negative source (or source
+# components). 
 def getsublist(inlist):
     listn = 0
     for n,i in enumerate(inlist):
@@ -32,6 +40,13 @@ def getsublist(inlist):
                 listn = n + 1
     return inlist[listn:] 
 
+# Parse VTK file to get array values.
+def getarray(infile,arrayname):
+    cmd = r"sed -e '1,/^LOOKUP_TABLE " + arrayname + "/d' -e '/^POINT_DATA/,$d' " + infile
+    cmdout = subprocess.check_output(cmd,shell=True)
+    array = cmdout.split()
+    while '' in array: array.remove('')  
+    return array
 
 # EXECUTE PROGRAM ##############################################################
 
@@ -47,9 +62,15 @@ nssslist = getlist(infile,"nsss")
 nstrlist = getlist(infile,"nstr")
 qbarlist = getlist(infile,"qbar")
 
+# Collect material listing into sorted list of integers.
+matarray = sorted(set(getarray(infile,"material_table")))
+matarray = map(int, matarray)
+
 # Output general diagnostic information preceded by a delimiter.
 print(80*"=")
-print("Operating on: " + infile)  
+print("Operating on file: " + infile)  
+
+print("Found the following materials: " + " ".join(map(str,matarray)))
 print("Found: ")
 print("  " + "{:>5}".format(str(len(nextlist))) + " negative external source entry")
 print("  " + "{:>5}".format(str(len(nssslist))) + " negative scattering source entry")
@@ -95,12 +116,7 @@ for qbar in qbarlist:
     
     AnnotationAtts.axes3D.autoSetTicks = 0
     
-    AnnotationAtts.axes3D.xAxis.tickMarks.visible = 1
-    AnnotationAtts.axes3D.xAxis.tickMarks.majorMinimum = 0
-    AnnotationAtts.axes3D.xAxis.tickMarks.majorMaximum = 42.84
-    AnnotationAtts.axes3D.xAxis.tickMarks.minorSpacing = 1.26
-    AnnotationAtts.axes3D.xAxis.tickMarks.majorSpacing = 1.26 
-    
+    AnnotationAtts.axes3D.xAxis.tickMarks.visible = 0
     AnnotationAtts.axes3D.yAxis.tickMarks.visible = 0
     AnnotationAtts.axes3D.zAxis.tickMarks.visible = 0
     
@@ -112,7 +128,7 @@ for qbar in qbarlist:
     AnnotationAtts.axes3D.zAxis.label.visible = 0
     
     AnnotationAtts.axes3D.triadFlag = 0
-    AnnotationAtts.axes3D.bboxFlag = 0
+    AnnotationAtts.axes3D.bboxFlag = 1
     
     SetAnnotationAttributes(AnnotationAtts)          
     
@@ -121,25 +137,36 @@ for qbar in qbarlist:
      
     # Adjust view to be an orthogonal plan view.                                                                            
     View3DAtts = View3DAttributes()                                                                                         
-    View3DAtts.viewNormal = (0, 0, 1)                                                                                       
-    View3DAtts.focus = (21.42, 0.63, 1.785)                                                                                 
-    View3DAtts.viewUp = (0, 1, 0)                                                                                           
-    View3DAtts.viewAngle = 30                                                                                               
-    View3DAtts.parallelScale = 21.5035                                                                                      
-    View3DAtts.nearPlane = -43.007                                                                                          
-    View3DAtts.farPlane = 43.007                                                                                            
-    View3DAtts.imagePan = (0, 0)                                                                                            
-    View3DAtts.imageZoom = 1                                                                                                
-    View3DAtts.perspective = 0                                                                                              
-    View3DAtts.eyeAngle = 2                                                                                                 
-    View3DAtts.centerOfRotationSet = 0                                                                                      
-    View3DAtts.centerOfRotation = (21.42, 0.63, 1.785)                                                                      
-    View3DAtts.axis3DScaleFlag = 0                                                                                          
-    View3DAtts.axis3DScales = (1, 1, 1)                                                                                     
-    View3DAtts.shear = (0, 0, 1)                                                                                            
-    View3DAtts.windowValid = 1                                                                                              
-    SetView3D(View3DAtts)                                                                                                   
+    View3DAtts.viewNormal = (0, 0, 1)
+    View3DAtts.focus = (39.264, 19.632, 0.5)
+    View3DAtts.viewUp = (0, 1, 0)
+    View3DAtts.viewAngle = 30
+    View3DAtts.parallelScale = 43.9013
+    View3DAtts.nearPlane = -87.8027
+    View3DAtts.farPlane = 87.8027
+    View3DAtts.imagePan = (0, 0)
+    View3DAtts.imageZoom = 1
+    View3DAtts.perspective = 0
+    View3DAtts.eyeAngle = 2
+    View3DAtts.centerOfRotationSet = 0
+    View3DAtts.centerOfRotation = (39.264, 19.632, 0.5)
+    View3DAtts.axis3DScaleFlag = 0
+    View3DAtts.axis3DScales = (1, 1, 1)
+    View3DAtts.shear = (0, 0, 1)
+    View3DAtts.windowValid = 1
+    SetView3D(View3DAtts)
+
+    # Adjust the legend.
+    plotName = GetPlotList().GetPlots(0).plotName 
+    legend = GetAnnotationObject(plotName)
+
+    legend.xScale = 3.
+#   legend.yScale = 3.
+#   legend.managePosition = 0
+#   legend.position = (0.7,0.15)
     
+    legend.orientation = legend.HorizontalBottom
+
     # For each material of interest.
     for mat in matdict:
     

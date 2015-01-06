@@ -16,7 +16,7 @@ matdict[7] = "mat_3_baffle"
 
 # DEFINE FUNCTIONS #############################################################
 
-# Parse VTK file to get material by mesh array.
+# Parse VTK file to get array values.
 def getarray(infile,arrayname):
     cmd = r"sed -e '1,/^LOOKUP_TABLE " + arrayname + "/d' -e '/^POINT_DATA/,$d' " + infile
     cmdout = subprocess.check_output(cmd,shell=True)
