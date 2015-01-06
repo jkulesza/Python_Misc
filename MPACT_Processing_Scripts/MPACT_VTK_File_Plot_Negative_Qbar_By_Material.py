@@ -119,8 +119,6 @@ if(len(qbarlist) > 0):
     print("Final Iteration Negative Sources: ")
     print(qbarlist)
 
-exit()
-
 # PERFORM VTK PLOTTING #########################################################
 
 OpenDatabase("localhost:./" + infile, 0)
