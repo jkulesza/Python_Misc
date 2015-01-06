@@ -75,6 +75,16 @@ def getarray(infile,arrayname):
     while '' in array: array.remove('')  
     return array
 
+# VISIT function to make custom color tables.
+def MakeRGBColorTable(name, ct):
+    ccpl = ColorControlPointList()
+    for pt in ct:
+        p = ColorControlPoint()
+        p.colors = (pt[0] * 255, pt[1] * 255, pt[2] * 255, 255)
+        p.position = pt[3]
+        ccpl.AddControlPoints(p)
+    AddColorTable(name, ccpl)
+
 # EXECUTE PROGRAM ##############################################################
 
 try:
@@ -136,13 +146,25 @@ for qbar in qbarlist:
      
     # Perform subset selection.
     silr = SILRestriction()
-     
+
+    # Make a color table. each control point is: (r,g,b,t)
+    ct = ((1.000,1.000,1.000,0.000),          # Orig: (1.000,0.961,0.941,0.000)
+          (0.996,0.878,0.824,0.125),
+          (0.988,0.733,0.631,0.250),
+          (0.988,0.573,0.447,0.375),
+          (0.984,0.416,0.290,0.500),
+          (0.937,0.231,0.173,0.625),
+          (0.796,0.094,0.114,0.750),
+          (0.647,0.059,0.082,0.875),
+          (0.404,0.000,0.051,1.000))
+    MakeRGBColorTable("myreds", ct)
+      
     # Set pseudocolor options.
     PseudocolorAtts = PseudocolorAttributes()
     PseudocolorAtts.limitsMode = PseudocolorAtts.CurrentPlot # OriginalData, CurrentPlot
     PseudocolorAtts.maxFlag = 1
     PseudocolorAtts.max = 0
-    PseudocolorAtts.colorTableName = "Reds"
+    PseudocolorAtts.colorTableName = "myreds"
     PseudocolorAtts.invertColorTable = 1
     SetPlotOptions(PseudocolorAtts)
      
