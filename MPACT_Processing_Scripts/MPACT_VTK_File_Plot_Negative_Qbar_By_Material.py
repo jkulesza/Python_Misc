@@ -186,6 +186,12 @@ for qbar in qbarlist:
     
     AnnotationAtts.axes3D.triadFlag = 0
     AnnotationAtts.axes3D.bboxFlag = 1
+
+    AnnotationAtts.databaseInfoFont.font = AnnotationAtts.databaseInfoFont.Arial  # Arial, Courier, Times
+    AnnotationAtts.databaseInfoFont.scale = 0.5
+
+    AnnotationAtts.userInfoFlag = 0
+    AnnotationAtts.timeInfoFlag = 0
     
     SetAnnotationAttributes(AnnotationAtts)          
     

@@ -90,6 +90,12 @@ AnnotationAtts.axes3D.zAxis.label.visible = 0
 AnnotationAtts.axes3D.triadFlag = 0
 AnnotationAtts.axes3D.bboxFlag = 1
 
+AnnotationAtts.databaseInfoFont.font = AnnotationAtts.databaseInfoFont.Arial  # Arial, Courier, Times
+AnnotationAtts.databaseInfoFont.scale = 0.5
+
+AnnotationAtts.userInfoFlag = 0
+AnnotationAtts.timeInfoFlag = 0
+ 
 SetAnnotationAttributes(AnnotationAtts)          
 
 # Draw the plot. 
@@ -121,9 +127,9 @@ plotName = GetPlotList().GetPlots(0).plotName
 legend = GetAnnotationObject(plotName)
 
 legend.xScale = 3.
-legend.yScale = 3.
-legend.managePosition = 0
-legend.position = (0.7,0.15)
+#legend.yScale = 3.
+#legend.managePosition = 0
+#legend.position = (0.7,0.15)
 
 legend.orientation = legend.HorizontalBottom
 
@@ -133,7 +139,7 @@ if(inmaterial):
     # Perform subset selection.
     silr = SILRestriction()
     silr.TurnOffAll()
-    silr.TurnOnSet(inmaterial) 
+    silr.TurnOnSet(int(inmaterial))
     SetPlotSILRestriction(silr ,1)
 
 SaveWindowAtts = SaveWindowAttributes()
