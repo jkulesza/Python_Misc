@@ -90,7 +90,7 @@ def MakeRGBColorTable(name, ct):
 try:
     infile = sys.argv[1]
 except:
-    print "Error: No VTK file defined in ARGV"
+    print("Error: No VTK file defined in ARGV.")
     exit()
  
 # Collect all VTK SCALAR entries corresponding to negative sources.
