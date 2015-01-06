@@ -84,4 +84,4 @@ MPACT_VTK_File_Plot_Response.py
 This file will plot responses from an MPACT VTK file through VISIT.  It is
 called by VISIT with the following command line arguments (ARGV):
 
-> ```<script.py> <file.vtk> <response_name> <material_number>```
+```<script.py> <file.vtk> <response_name> <material_number>```
