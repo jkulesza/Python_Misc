@@ -8,7 +8,8 @@ Execution Instructions
 
 Execute as ```python NumberDensityConverter.py``` and a menu should appear as
 
-```Convert:
+```
+Convert:
 
   1)   w/o   to   a/o
   2)   a/o   to   w/o
@@ -17,7 +18,8 @@ Execute as ```python NumberDensityConverter.py``` and a menu should appear as
   5)   w/o   to a/bn-cm
   6)   a/o   to a/bn-cm
 
-Which conversion (1-6)?```
+Which conversion (1-6)?
+```
 
 From here, all prompts and outputs are expected to be self-explanatory.
 
