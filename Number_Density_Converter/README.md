@@ -51,3 +51,36 @@ the main application.  The dictionaries are as follows:
 * Names = { ZAID : "name" }
   where a name is now associated with a given ZAID (regardless) of what the user
   chose to specify the ZAID with.  This is used for output purposes
+
+Example Execution
+-----------------
+
+An example execution might go as follows for 3 w/o enriched uranium.
+
+```
+Convert:
+
+  1)   w/o   to   a/o
+  2)   a/o   to   w/o
+  3) a/bn-cm to   a/o
+  4) a/bn-cm to   w/o 
+  5)   w/o   to a/bn-cm
+  6)   a/o   to a/bn-cm
+
+Which conversion (1-6)? 1
+Enter ZAID, Short Name, or Long Name followed by the associated w/o value (enter 0 to finish): U-235 0.7 
+
+    ZAID   Species             Input (w/o)   
+   92235   U-235               0.700000000   
+Enter ZAID, Short Name, or Long Name followed by the associated w/o value (enter 0 to finish): U-238 99.3
+
+    ZAID   Species             Input (w/o)   
+   92235   U-235               0.700000000   
+   92238   U-238              99.300000000   
+Enter ZAID, Short Name, or Long Name followed by the associated w/o value (enter 0 to finish): 0
+What is the material bulk density (g/cc)? 19.1
+
+    ZAID   Species              Mass (amu)            Input (w/o)    Bulk Density (g/cc)           Output (a/o)   
+   92235   U-235             ---.---------            0.700000000           19.100000000            0.007088914   
+   92238   U-238             ---.---------           99.300000000           19.100000000            0.992911086 
+```
