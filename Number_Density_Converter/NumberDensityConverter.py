@@ -219,6 +219,7 @@ def printOutputTable(inp, inlabel, \
         print(
               "{:>8s}   ".format("ZAID") + \
               "{:<8s}   ".format("Species") + \
+              "{:>20s}   ".format("Mass (amu)") + \
               "{:>20s}   ".format("Input (" + inlabel + ")") + \
               "{:>20s}   ".format("Bulk Density (g/cc)") + \
               "{:>20s}   ".format("Output (" + outlabel + ")")
@@ -237,9 +238,11 @@ def printOutputTable(inp, inlabel, \
     else:
         for i in enumerate(inp):
             n = NuclearData.Names[i[1][0]]
+            m = NuclearData.Masses[i[1][0]]
             print(
                   "{:>8d}   ".format(i[1][0]) + \
                   "{:<8s}   ".format(n) + \
+                  "{:>20.9f}   ".format(m) + \
                   "{:>20.9f}   ".format(i[1][1]) + \
                   "{:>20.9f}   ".format(bulk_density) + \
                   "{:>20.9f}   ".format(out[i[0]][1]) 
