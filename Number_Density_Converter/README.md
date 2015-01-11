@@ -114,3 +114,9 @@ What is the material bulk density (g/cc)? 19.1
    92235   U-235             ---.---------            3.000000000           19.100000000            0.030372126   
    92238   U-238             ---.---------           97.000000000           19.100000000            0.969627874 
 ```
+
+Alternatively, one could use the included input files to perform the computation.  These are simply executed as:
+
+```
+python NumberDensityConverter.py < file.inp
+```
