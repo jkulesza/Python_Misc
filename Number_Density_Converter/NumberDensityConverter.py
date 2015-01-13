@@ -311,6 +311,7 @@ except getopt.GetoptError as err:
     print(str(err))
     print("Use NumberDensityConverter.py -h for help, exiting.")
     sys.exit(2)
+
 if(len(sys.argv) == 1):
     commandLineInterface()
 else:

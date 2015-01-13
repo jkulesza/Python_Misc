@@ -32,7 +32,7 @@ Required File: NuclearData.py
 An external file is needed which supplies the isotopic/elemental mass data.
 Because of licensing concerns, these data cannot be provided.  However, the
 format of the file is given as follows to allow an ambitious user to synthesize
-their own file.
+his or her own file.
 
 Within this file, Python dictionaries are used to store data for reference in
 the main application.  The dictionaries are as follows:
@@ -49,7 +49,7 @@ the main application.  The dictionaries are as follows:
   where "mnemonic" in this case is an abbreviation.  Using the previous example,
   one might use "H-1" or "He".
 * Names = { ZAID : "name" }
-  where a name is now associated with a given ZAID (regardless) of what the user
+  where the name is now associated with a given ZAID regardless of what the user
   chose to specify the ZAID with.  This is used for output purposes
 
 Example Execution
