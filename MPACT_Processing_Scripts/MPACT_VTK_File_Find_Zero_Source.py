@@ -1,6 +1,8 @@
 
 # IMPORT PACKAGES ##############################################################
 
+from __future__ import print_function
+
 import subprocess
 import sys
 import re
@@ -37,11 +39,14 @@ def getlist(infile, scalar_str):
 try:
     infile = sys.argv[1]
 except:
-    print "Error: No VTK file defined in ARGV"
+    print("Error: No VTK file defined in ARGV")
     exit()
+
+outfile = infile + ".neg"
+outfile = open(outfile,'w')
  
 matarray = getarray(infile,"material_table"); matarray = map(int, matarray)
-print("Length of material array: " + str(len(matarray)))
+print("Length of material array: " + str(len(matarray)), file=outfile)
 
 # Collect all VTK SCALAR entries corresponding to negative sources.
 nextlist = getlist(infile,"next")
@@ -50,18 +55,18 @@ nstrlist = getlist(infile,"nstr")
 qbarlist = getlist(infile,"qbar")
 
 # Output general diagnostic information preceded by a delimiter.
-print("Operating on: " + infile)  
-print("Found: ")
-print("  " + "{:>5}".format(str(len(nextlist))) + " negative external source entry")
-print("  " + "{:>5}".format(str(len(nssslist))) + " negative scattering source entry")
-print("  " + "{:>5}".format(str(len(nstrlist))) + " negative total cross section entry")
-print("  " + "{:>5}".format(str(len(qbarlist))) + " negative total source entry")
-print("Total: " + str(len(nextlist)+len(nssslist)+len(nstrlist)+len(qbarlist)) + " Entries")
+print("Operating on: " + infile, file=outfile)  
+print("Found: ", file=outfile)
+print("  " + "{:>5}".format(str(len(nextlist))) + " negative external source entry", file=outfile)
+print("  " + "{:>5}".format(str(len(nssslist))) + " negative scattering source entry", file=outfile)
+print("  " + "{:>5}".format(str(len(nstrlist))) + " negative total cross section entry", file=outfile)
+print("  " + "{:>5}".format(str(len(qbarlist))) + " negative total source entry", file=outfile)
+print("Total: " + str(len(nextlist)+len(nssslist)+len(nstrlist)+len(qbarlist)) + " Entries", file=outfile)
  
 # Print table header.
-print(101*"-")
-print("| {:^17} | {:^17} | {:^17} | {:^17} | {:^17} |".format("Group", "Neg Ext.", "Neg. Self-Scat.", "Neg. Sig-Tr.", "Neg. Q-bar"))
-print(101*"-")
+print(101*"-", file=outfile)
+print("| {:^17} | {:^17} | {:^17} | {:^17} | {:^17} |".format("Group", "Neg Ext.", "Neg. Self-Scat.", "Neg. Sig-Tr.", "Neg. Q-bar"), file=outfile)
+print(101*"-", file=outfile)
 
 # Iterate through energy groups and source components to search for negatives.
 for g in range(1, MAXGRPS+1):
@@ -110,7 +115,7 @@ for g in range(1, MAXGRPS+1):
                                                                     " ".join(map(str, next_negmat)),
                                                                     " ".join(map(str, nsss_negmat)),
                                                                     " ".join(map(str, nstr_negmat)),
-                                                                    " ".join(map(str, qbar_negmat))))
+                                                                    " ".join(map(str, qbar_negmat))), file=outfile)
 
-print(101*"-")
+print(101*"-", file=outfile)
 

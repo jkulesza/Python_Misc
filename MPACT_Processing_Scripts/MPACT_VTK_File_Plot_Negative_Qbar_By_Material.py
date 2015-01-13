@@ -199,6 +199,7 @@ for qbar in qbarlist:
     DrawPlots()
      
     # Adjust view to be an orthogonal plan view.                                                                            
+# B&W-1484 Core 1
     View3DAtts = View3DAttributes()                                                                                         
     View3DAtts.viewNormal = (0, 0, 1)
     View3DAtts.focus = (39.264, 19.632, 0.5)
@@ -218,6 +219,28 @@ for qbar in qbarlist:
     View3DAtts.shear = (0, 0, 1)
     View3DAtts.windowValid = 1
     SetView3D(View3DAtts)
+
+# Simple Test Problem
+#    View3DAtts = View3DAttributes()
+#    View3DAtts.viewNormal = (0, 0, 1)
+#    View3DAtts.focus = (21.42, 0.63, 1.785)
+#    View3DAtts.viewUp = (0, 1, 0)
+#    View3DAtts.viewAngle = 30
+#    View3DAtts.parallelScale = 21.5035
+#    View3DAtts.nearPlane = -43.007
+#    View3DAtts.farPlane = 43.007
+#    View3DAtts.imagePan = (0, 0)
+#    View3DAtts.imageZoom = 1
+#    View3DAtts.perspective = 0
+#    View3DAtts.eyeAngle = 2
+#    View3DAtts.centerOfRotationSet = 0
+#    View3DAtts.centerOfRotation = (21.42, 0.63, 1.785)
+#    View3DAtts.axis3DScaleFlag = 0
+#    View3DAtts.axis3DScales = (1, 1, 1)
+#    View3DAtts.shear = (0, 0, 1)
+#    View3DAtts.windowValid = 1
+#    SetView3D(View3DAtts)
+ 
 
     # Adjust the legend.
     plotName = GetPlotList().GetPlots(0).plotName 
