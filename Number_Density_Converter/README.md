@@ -56,7 +56,6 @@ Example Execution
 An example execution might go as follows for natural enriched uranium:
 
 ```
-
 Convert:
 
   1)   w/o   to   a/o
