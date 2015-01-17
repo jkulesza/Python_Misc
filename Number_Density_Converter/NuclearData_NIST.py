@@ -2,7 +2,7 @@
 
 ################################################################################
 #
-# Atomic weight ratio data from NIST.
+# Atomic weight data from NIST.
 #     The values shown below are the atomic masses for the various nuclides and
 #     elements.  The masses are provided by the NIST linearized data site: 
 #     http://www.nist.gov/pml/data/comp.cfm and have been post-processed with 
