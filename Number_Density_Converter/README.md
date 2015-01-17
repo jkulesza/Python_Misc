@@ -3,8 +3,7 @@ Number_Density_Converter
 
 This script is an interactive shell script to convert amongst weight fraction,
 atom fraction, and atom density (a/bn-cm) using isotopic/elemental mass data
-from MCNP6.  Due to licensing issues, those nuclear data is not available;
-however, it can be easily created by those who are interested.
+from NIST.  
 
 Execution Instructions
 ----------------------
@@ -30,9 +29,8 @@ Required File: NuclearData.py
 -----------------------------
 
 An external file is needed which supplies the isotopic/elemental mass data.
-Because of licensing concerns, these data cannot be provided.  However, the
-format of the file is given as follows to allow an ambitious user to synthesize
-his or her own file.
+The format of the file is given as follows to allow an ambitious user to
+synthesize his or her own file.
 
 Within this file, Python dictionaries are used to store data for reference in
 the main application.  The dictionaries are as follows:
@@ -58,6 +56,7 @@ Example Execution
 An example execution might go as follows for natural enriched uranium:
 
 ```
+
 Convert:
 
   1)   w/o   to   a/o
@@ -68,11 +67,11 @@ Convert:
   6)   a/o   to a/bn-cm
 
 Which conversion (1-6)? 1
-Enter ZAID, Short Name, or Long Name followed by the associated w/o value (enter 0 to finish): U-235 0.7 
+Enter ZAID, Short Name, or Long Name followed by the associated w/o value (enter 0 to finish): u-235 0.7
 
     ZAID   Species             Input (w/o)   
    92235   U-235               0.700000000   
-Enter ZAID, Short Name, or Long Name followed by the associated w/o value (enter 0 to finish): U-238 99.3
+Enter ZAID, Short Name, or Long Name followed by the associated w/o value (enter 0 to finish): u-238 99.3
 
     ZAID   Species             Input (w/o)   
    92235   U-235               0.700000000   
@@ -81,38 +80,8 @@ Enter ZAID, Short Name, or Long Name followed by the associated w/o value (enter
 What is the material bulk density (g/cc)? 19.1
 
     ZAID   Species              Mass (amu)            Input (w/o)    Bulk Density (g/cc)           Output (a/o)   
-   92235   U-235             ---.---------            0.700000000           19.100000000            0.007088914   
-   92238   U-238             ---.---------           99.300000000           19.100000000            0.992911086 
-```
-
-An example execution might go as follows for 3 w/o enriched uranium:
-
-```
-Convert:
-
-  1)   w/o   to   a/o
-  2)   a/o   to   w/o
-  3) a/bn-cm to   a/o
-  4) a/bn-cm to   w/o 
-  5)   w/o   to a/bn-cm
-  6)   a/o   to a/bn-cm
-
-Which conversion (1-6)? 1
-Enter ZAID, Short Name, or Long Name followed by the associated w/o value (enter 0 to finish): U-235 3.0
-
-    ZAID   Species             Input (w/o)   
-   92235   U-235               3.000000000   
-Enter ZAID, Short Name, or Long Name followed by the associated w/o value (enter 0 to finish): U-238 97.0
-
-    ZAID   Species             Input (w/o)   
-   92235   U-235               3.000000000   
-   92238   U-238              97.000000000   
-Enter ZAID, Short Name, or Long Name followed by the associated w/o value (enter 0 to finish): 0
-What is the material bulk density (g/cc)? 19.1
-
-    ZAID   Species              Mass (amu)            Input (w/o)    Bulk Density (g/cc)           Output (a/o)   
-   92235   U-235             ---.---------            3.000000000           19.100000000            0.030372126   
-   92238   U-238             ---.---------           97.000000000           19.100000000            0.969627874 
+   92235   U-235             235.043929900            0.700000000           19.100000000            0.007088914   
+   92238   U-238             238.050788200           99.300000000           19.100000000            0.992911086
 ```
 
 Alternatively, one could use the included input files to perform the computation.  These are simply executed as:
