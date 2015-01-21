@@ -10,7 +10,7 @@ import NuclearData_NIST as NuclearData
 
 # Define constants.
 #N_A      = 0.59703109E24  # Avogadro's number from MCNP.
-N_A      = 0.60221413e+24  # Avogadro's number from MCNP.
+N_A      = 0.60221413e+24  # Standard Avogadro's number.
 bnpercm2 = 1.0E24          # 10^24 barns per cm^2.
 
 ################################################################################
