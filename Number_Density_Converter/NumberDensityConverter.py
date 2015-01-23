@@ -289,7 +289,7 @@ Convert:
         elif(i == 4):
             (inp, bulk_density) = getInput("a/bn-cm")
             (out, bulk_density) = abncm_to_wo(inp, bulk_density)
-            printOutputTable(inp,"a/bn-cm","a/o",bulk_density,out)
+            printOutputTable(inp,"a/bn-cm","w/o",bulk_density,out)
         elif(i == 5):
             (inp, bulk_density) = getInput("w/o")
             (out, bulk_density) = wo_to_abncm(inp, bulk_density)
