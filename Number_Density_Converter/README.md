@@ -5,6 +5,9 @@ This script is an interactive shell script to convert amongst weight fraction,
 atom fraction, and atom density (a/bn-cm) using isotopic/elemental mass data
 from NIST.  
 
+Note that the user is free to input fraction or percent and those input values
+will be normalized to produce normalized output.
+
 Execution Instructions
 ----------------------
 
