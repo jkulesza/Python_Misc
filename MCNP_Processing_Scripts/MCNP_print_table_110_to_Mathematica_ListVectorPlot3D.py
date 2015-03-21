@@ -22,7 +22,12 @@ def import_print_table_110(infilename):
             infile_full += line            
 
     # Extract print table 110 with headers and title.
-    table110 = re.search(r'(print table 110.*?)\s+1problem summary', infile_full, re.DOTALL).group(1)
+    table110 = re.search(r'(print table 110.*?)\n[*1]', infile_full, re.DOTALL).group(1)
+
+    # Strip off any "dump file" outputs.
+#   table110 = re.sub(r'(.*?)\n\n.*?$', r'\1', table110, re.DOTALL)
+
+    print(table110)
 
     # Extract data from print table 110.
     table110 = re.sub(r'\n\s+\n',r'\n\n', table110, re.DOTALL)
@@ -45,7 +50,7 @@ outfilename = infilename + ".mathematica_input"
 outfile = open(outfilename,'w')
 
 table110arr = import_print_table_110(infilename)
-
+exit()
 mathematica_input = ""
 for i,n in enumerate(table110arr):
     nps = n[0]
@@ -58,9 +63,9 @@ for i,n in enumerate(table110arr):
     erg = n[9]
     
     # Debugging printout of key data.
-    print("{:>5} {:>10} {:>10} {:>10} {:>10} {:>10} {:>10} {:>10}".format(nps, x, y, z, u, v, w, erg))
+#   print("{:>5} {:>10} {:>10} {:>10} {:>10} {:>10} {:>10} {:>10}".format(nps, x, y, z, u, v, w, erg))
 
-    mathematica_input += "Arrow[{{{{{0}, {1}, {2}}}, {{{3}, {4}, {5}}}}}], \n".format(x, y, z, u, v, w)
+    mathematica_input += "Arrow[{{{{{0}, {1}, {2}}}, {{{0}+{3}, {1}+{4}, {2}+{5}}}}}], \n".format(x, y, z, u, v, w)
 
 mathematica_input += 'Cylinder[{{0, 0, -0.5}, {0, 0, 0.5}}, 0.47]}, Axes->True, AxesLabel->{"x", "y", "z"}, ViewPoint->{0,0,Infinity}]'
 
