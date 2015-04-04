@@ -5,13 +5,6 @@ import re
 
 # DEFINE CONSTANTS #############################################################
 
-MAXGRPS = 47
-
-matdict = {}
-matdict[5] = "mat_1_fuel"
-matdict[6] = "mat_2_moderator"
-matdict[7] = "mat_3_baffle"
-
 # DEFINE FUNCTIONS #############################################################
 
 # Import Print Table 110 Values
@@ -24,17 +17,18 @@ def import_print_table_110(infilename):
     # Extract print table 110 with headers and title.
     table110 = re.search(r'(print table 110.*?)\n[*1]', infile_full, re.DOTALL).group(1)
 
-    # Strip off any "dump file" outputs.
-#   table110 = re.sub(r'(.*?)\n\n.*?$', r'\1', table110, re.DOTALL)
-
-    print(table110)
-
     # Extract data from print table 110.
     table110 = re.sub(r'\n\s+\n',r'\n\n', table110, re.DOTALL)
     table110 = re.search(r'^.*?nps.*?\n+(.*?)$', table110, re.DOTALL).group(1)
 
+#   print(table110)
+
     # Split the data into a multidimensional array.
-    table110arr = [line.split() for line in table110.split('\n')]
+    table110arr = [line.split() for line in table110.split('\n') 
+                    if line.find('100') != -1 and line.find('100') != -1]
+
+#   for i in table110arr:
+#       print(i)
 
     return table110arr
 
@@ -50,7 +44,6 @@ outfilename = infilename + ".mathematica_input"
 outfile = open(outfilename,'w')
 
 table110arr = import_print_table_110(infilename)
-exit()
 mathematica_input = ""
 for i,n in enumerate(table110arr):
     nps = n[0]
