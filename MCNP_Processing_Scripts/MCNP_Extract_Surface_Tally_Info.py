@@ -48,6 +48,6 @@ for n,i in enumerate(type1tallyarr):
  
 
     if(angbinl == -1.0):
-        print("{0:>10}, {1:8.5e}, {2:5.4f}".format(userbin, tally, error))
+        outfile.write("{0:>10}, {1:8.5e}, {2:5.4f}\n".format(userbin, tally, error))
 
 outfile.close()
