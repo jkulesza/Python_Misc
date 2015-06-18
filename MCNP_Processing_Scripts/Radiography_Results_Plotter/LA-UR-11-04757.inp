@@ -1,0 +1,54 @@
+Conical Test Problem
+c
+c This problem adapted from LA-UR-11-04757 (2011)
+c   Radiography Test Problem for MCNP
+c   E. F. Shores, D. P. Flamig, J. D. Zumbro
+c
+1 101 -18.0 -1 10       imp:p=1
+2 101 -18.0 -2 11       imp:p=1
+3 101 -18.0 -3 12       imp:p=1
+4 103 -2.7 (1 2 3) -4   imp:p=1
+5 104 -7.8 -5           imp:p=1
+6 105 -1.0e-3 4 5 -98   imp:p=1
+10 0 -1 -10             imp:p=1
+11 0 -2 -11             imp:p=1
+12 0 -3 -12             imp:p=1
+80 105 -1.0e-3 98 -99   imp:p=1
+99 0 99                 imp:p=1
+
+1 so 1.0
+2 sz 2.5 1
+3 sz -2.5 1
+4 trc 0 0 -5 0 0 10 2.5 5
+5 s 5 5 5 1
+10 c/x 0 0 0.5
+11 c/x 0 2.5 0.75
+12 c/x 0 -2.5 0.25
+98 so 900
+99 so 1000
+
+m101 74184 1
+m103 13027 1
+m102 73181 1.0
+m105 7014 0.770900 8016 0.219500 18000 0.009600
+mpn105 7014 8016 18040
+m104 26056 0.698 24052 0.206 28058 0.096
+m106 71175 2.0 14028 1.0 8016 5.0
+mpn106 73181 14028 8016
+c
+mode p
+phys:p j 0 0
+cut:p j 0.1
+sdef pos -133 0. 0.
+      vec 1 0 0 
+c
+fc5 Sample Radiograph
+fir5:p 392 0. 0. 0 0. 0. 0. 0 0 0
+fs5 -22.48 1124i 22.48
+c5 -22.48 1124i 22.48
+talnp5
+c
+nps 1
+notrn
+prdmp j 1 1 2
+print
