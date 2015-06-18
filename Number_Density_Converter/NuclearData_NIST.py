@@ -3312,6 +3312,7 @@ Masses = {
 }     
 
 Full_Name = {
+    "hydrogen" : 1000,
     "hydrogen-1" : 1001,
     "hydrogen-2" : 1002,
     "hydrogen-3" : 1003,
@@ -4077,6 +4078,7 @@ Full_Name = {
 }
 
 Short_Name = {
+    "h" : 1000,
     "h-1" : 1001,
     "h-2" : 1002,
     "h-3" : 1003,
@@ -4842,6 +4844,7 @@ Short_Name = {
 }
 
 Names = {
+    1000 : "H (Nat.)",
     1001 : "H-1",
     1002 : "H-2",
     1003 : "H-3",
