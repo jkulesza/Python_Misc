@@ -53,7 +53,7 @@ the main application.  The dictionaries are as follows:
   where the name is now associated with a given ZAID regardless of what the user
   chose to specify the ZAID with.  This is used for output purposes
 
-Note that if the default NIST data is not used, the import statement in the main
+Note that if the default NIST data are not used, the import statement in the main
 routine will need to be updated.
 
 Example Execution
