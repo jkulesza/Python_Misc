@@ -64,9 +64,9 @@ ax.set_xlabel('X')
 ax.set_ylabel('Y')
 
 cbar = pl.colorbar(cax)
-cbar.set_label('Color bar')
+cbar.set_label('Colorbar')
 
-# pl.savefig('mypic.png',dpi=(120))
-pl.show()
+pl.savefig('viridis.png',dpi=(120))
+#pl.show()
 
 pl.close()

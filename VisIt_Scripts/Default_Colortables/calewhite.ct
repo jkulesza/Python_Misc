@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<Object name="ColorTable">
+    <Field name="Version" type="string">2.9.2</Field>
+    <Object name="ColorControlPointList">
+        <Object name="ColorControlPoint">
+            <Field name="colors" type="unsignedCharArray" length="4">255 255 255 255 </Field>
+        </Object>
+        <Object name="ColorControlPoint">
+            <Field name="colors" type="unsignedCharArray" length="4">0 0 255 255 </Field>
+            <Field name="position" type="float">0.17</Field>
+        </Object>
+        <Object name="ColorControlPoint">
+            <Field name="colors" type="unsignedCharArray" length="4">0 255 255 255 </Field>
+            <Field name="position" type="float">0.34</Field>
+        </Object>
+        <Object name="ColorControlPoint">
+            <Field name="colors" type="unsignedCharArray" length="4">0 255 0 255 </Field>
+            <Field name="position" type="float">0.5</Field>
+        </Object>
+        <Object name="ColorControlPoint">
+            <Field name="colors" type="unsignedCharArray" length="4">255 255 0 255 </Field>
+            <Field name="position" type="float">0.67</Field>
+        </Object>
+        <Object name="ColorControlPoint">
+            <Field name="colors" type="unsignedCharArray" length="4">255 0 0 255 </Field>
+            <Field name="position" type="float">0.84</Field>
+        </Object>
+        <Object name="ColorControlPoint">
+            <Field name="colors" type="unsignedCharArray" length="4">255 0 255 255 </Field>
+            <Field name="position" type="float">1</Field>
+        </Object>
+        <Field name="category" type="string">UserDefined</Field>
+    </Object>
+</Object>

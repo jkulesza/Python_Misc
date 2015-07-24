@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<Object name="ColorTable">
+    <Field name="Version" type="string">2.9.2</Field>
+    <Object name="ColorControlPointList">
+        <Object name="ColorControlPoint">
+            <Field name="colors" type="unsignedCharArray" length="4">255 247 251 255 </Field>
+        </Object>
+        <Object name="ColorControlPoint">
+            <Field name="colors" type="unsignedCharArray" length="4">236 226 240 255 </Field>
+            <Field name="position" type="float">0.125</Field>
+        </Object>
+        <Object name="ColorControlPoint">
+            <Field name="colors" type="unsignedCharArray" length="4">208 209 230 255 </Field>
+            <Field name="position" type="float">0.25</Field>
+        </Object>
+        <Object name="ColorControlPoint">
+            <Field name="colors" type="unsignedCharArray" length="4">166 189 219 255 </Field>
+            <Field name="position" type="float">0.375</Field>
+        </Object>
+        <Object name="ColorControlPoint">
+            <Field name="colors" type="unsignedCharArray" length="4">103 169 207 255 </Field>
+            <Field name="position" type="float">0.5</Field>
+        </Object>
+        <Object name="ColorControlPoint">
+            <Field name="colors" type="unsignedCharArray" length="4">54 144 192 255 </Field>
+            <Field name="position" type="float">0.625</Field>
+        </Object>
+        <Object name="ColorControlPoint">
+            <Field name="colors" type="unsignedCharArray" length="4">2 129 138 255 </Field>
+            <Field name="position" type="float">0.75</Field>
+        </Object>
+        <Object name="ColorControlPoint">
+            <Field name="colors" type="unsignedCharArray" length="4">1 108 89 255 </Field>
+            <Field name="position" type="float">0.875</Field>
+        </Object>
+        <Object name="ColorControlPoint">
+            <Field name="colors" type="unsignedCharArray" length="4">1 70 54 255 </Field>
+            <Field name="position" type="float">1</Field>
+        </Object>
+        <Field name="category" type="string">UserDefined</Field>
+    </Object>
+</Object>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<Object name="ColorTable">
+    <Field name="Version" type="string">2.9.2</Field>
+    <Object name="ColorControlPointList">
+        <Object name="ColorControlPoint">
+            <Field name="colors" type="unsignedCharArray" length="4">170 170 170 255 </Field>
+        </Object>
+        <Object name="ColorControlPoint">
+            <Field name="colors" type="unsignedCharArray" length="4">225 225 225 255 </Field>
+            <Field name="position" type="float">1</Field>
+        </Object>
+        <Field name="smoothing" type="string">None</Field>
+        <Field name="discrete" type="bool">true</Field>
+        <Field name="category" type="string">UserDefined</Field>
+    </Object>
+</Object>
