@@ -50,15 +50,15 @@ print('    </Object>')
 print('</Object>     ')
 
 # Create a new colourmap from the ctab array
-cubehelixcm = ListedColormap(ctab,name='cubehelix',N=None)
+viridiscm = ListedColormap(ctab,name='viridis',N=None)
 
 # Plot example
 fig = pl.figure()
 
 ax = fig.add_subplot(111)
 
-# New colourmap 'cubehelixcm' can now be called like any other
-cax = ax.imshow(Z,cmap=cubehelixcm,interpolation = 'bicubic')
+# New colourmap 'viridiscm' can now be called like any other
+cax = ax.imshow(Z,cmap=viridiscm,interpolation = 'bicubic')
 
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
