@@ -73,10 +73,12 @@ def print_table_of_values(vec, cols, fmt):
 # Create a Cartesian VTK file from key wwinp parameters and the ww distribution.
 def create_Cartesian_VTK(outfilename, nx, ny, nz, x, y, z, ww):
 
+    minval = str(np.min(ww[np.nonzero(ww)]))
+
     f = open(outfilename, 'w')
 
     f.write('# vtk DataFile Version 2.0\n')
-    f.write('MCNP Weight Window Input File (Minimum Non-Zero Value: ' + '\n')
+    f.write('MCNP Weight Window Input File; Minimum Non-Zero Value: ' + minval + '\n')
     f.write('ASCII\n')
     f.write('DATASET RECTILINEAR_GRID\n')
     f.write('DIMENSIONS ' + str(nx) + ' ' + str(ny) + ' ' + str(nz) + '\n')
