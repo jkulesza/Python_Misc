@@ -23,6 +23,13 @@ def create_1D_spatial_mesh(dim_array):
     i = np.linspace(imin, imax, idel)
     return(ni, i)
 
+# Create an array listing the energy mesh from the wwinp file.
+def create_1D_energy_mesh(erg_array):
+    i = [float(i) for i in (list(filter(None, erg_array.split(' '))))]
+    i = np.array(i)
+    ni = len(i)
+    return(ni, i)
+ 
 # Split apart wwinp file to extract key header data.  This was done *very* 
 # quickly, and badly.  It works for cases with only one coarse mesh in one
 # direction and one energy group.  However, the word is: works.
@@ -35,6 +42,7 @@ def extract_wwinp_data(wwinp):
     nx, x = create_1D_spatial_mesh(wwinp[4])
     ny, y = create_1D_spatial_mesh(wwinp[5])
     nz, z = create_1D_spatial_mesh(wwinp[6])
+    ne, e = create_1D_energy_mesh(wwinp[7])
 
     # Split ww value array into list of individual values.
     ww = wwinp[8:]
@@ -45,11 +53,11 @@ def extract_wwinp_data(wwinp):
     ww = np.array(ww)
 
     # Very basic error checking.
-    if(len(ww) != nx * ny * nz):
+    if(len(ww) != ne * nx * ny * nz):
         raise ValueError('Incorrect number of weight window values versus \
 spatial mesh.')
 
-    return (nx, ny, nz), (x, y, z), ww
+    return (nx, ny, nz, ne), (x, y, z, e), ww
 
 # Reformat a vector of data into a table of values, formatted consistently.
 def print_table_of_values(vec, cols, fmt):
@@ -71,7 +79,7 @@ def print_table_of_values(vec, cols, fmt):
     return table
 
 # Create a Cartesian VTK file from key wwinp parameters and the ww distribution.
-def create_Cartesian_VTK(outfilename, nx, ny, nz, x, y, z, ww):
+def create_Cartesian_VTK(outfilename, nx, ny, nz, ne, x, y, z, e, ww):
 
     minval = str(np.min(ww[np.nonzero(ww)]))
 
@@ -92,10 +100,15 @@ def create_Cartesian_VTK(outfilename, nx, ny, nz, x, y, z, ww):
     f.write('Z_COORDINATES ' + str(nz) + ' float\n')
     f.write(print_table_of_values(z, 5, 'Float'))
 
+    ww = np.split(ww, ne)
+
     f.write('POINT_DATA ' + str(nx * ny * nz) + '\n')
-    f.write('SCALARS Weight_Windows float\n')     
-    f.write('LOOKUP_TABLE default\n')
-    f.write(print_table_of_values(ww, 5, 'Float'))
+    for n, i in enumerate(e):
+        erg = '{:5.3e}'.format(i)
+        f.write('SCALARS Weight_Windows_Upper_Erg_' + erg + ' float\n')     
+        f.write('LOOKUP_TABLE Weight_Windows_Upper_Erg_' + erg + '_table\n')     
+#       f.write('LOOKUP_TABLE default\n')
+        f.write(print_table_of_values(ww[n], 5, 'Float'))
 
     f.close()
 
@@ -112,8 +125,8 @@ except:
 with open (infilename, "r") as myfile:
     wwinp = myfile.read()
 
-(nx, ny, nz), (x, y, z), ww = extract_wwinp_data(wwinp)
+(nx, ny, nz, ne), (x, y, z, e), ww = extract_wwinp_data(wwinp)
 
 create_Cartesian_VTK(   outfilename = infilename + '.vtk',
-                        nx = nx, ny = ny, nz = nz, 
-                        x = x, y = y, z = z, ww = ww)
+                        nx = nx, ny = ny, nz = nz, ne = ne,
+                        x = x, y = y, z = z, e = e, ww = ww)
