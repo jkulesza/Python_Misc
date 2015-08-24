@@ -64,7 +64,7 @@ def print_table_of_values(vec, cols, fmt):
     table = ""
     for n, i in enumerate(vec):
         if(fmt == 'Int'):
-            table += ' {:13d}'.format(i)
+            table += ' {:8d}'.format(i)
         elif(fmt == 'Float'):
             table += ' {:13.5e}'.format(i)
         else:
@@ -85,29 +85,40 @@ def create_Cartesian_VTK(outfilename, nx, ny, nz, ne, x, y, z, e, ww):
 
     f = open(outfilename, 'w')
 
+    # Print minimum non-zero weight window value for log-scaling purposes.
+    print("Minimum non-zero value: " + minval)
+
+    # Write VTK header information.
     f.write('# vtk DataFile Version 2.0\n')
     f.write('MCNP Weight Window Input File; Minimum Non-Zero Value: ' + minval + '\n')
     f.write('ASCII\n')
     f.write('DATASET RECTILINEAR_GRID\n')
     f.write('DIMENSIONS ' + str(nx) + ' ' + str(ny) + ' ' + str(nz) + '\n')
 
+    # Write VTK coordinate information.
     f.write('X_COORDINATES ' + str(nx) + ' float\n')
     f.write(print_table_of_values(x, 5, 'Float'))
-
     f.write('Y_COORDINATES ' + str(ny) + ' float\n')
     f.write(print_table_of_values(y, 5, 'Float'))
-
     f.write('Z_COORDINATES ' + str(nz) + ' float\n')
     f.write(print_table_of_values(z, 5, 'Float'))
 
+    # Write VTK data delimiter-like line.
+    f.write('POINT_DATA ' + str(nx * ny * nz) + '\n')
+
+    # Output weight window mesh cell index.
+    f.write('SCALARS Weight_Window_Mesh_Index int\n')     
+    f.write('LOOKUP_TABLE Weight_Window_Mesh_Index_table\n')     
+    f.write(print_table_of_values(range(1, nx * ny * nz + 1), 10, 'Int'))
+
+    # Split the whole weight window mesh into an array of the energy-grouped values.
     ww = np.split(ww, ne)
 
-    f.write('POINT_DATA ' + str(nx * ny * nz) + '\n')
+    # Output energy-grouped weight window values.
     for n, i in enumerate(e):
         erg = '{:5.3e}'.format(i)
         f.write('SCALARS Weight_Windows_Upper_Erg_' + erg + ' float\n')     
         f.write('LOOKUP_TABLE Weight_Windows_Upper_Erg_' + erg + '_table\n')     
-#       f.write('LOOKUP_TABLE default\n')
         f.write(print_table_of_values(ww[n], 5, 'Float'))
 
     f.close()
