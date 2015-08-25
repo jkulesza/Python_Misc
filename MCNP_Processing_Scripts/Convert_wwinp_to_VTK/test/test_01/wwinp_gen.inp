@@ -1,0 +1,95 @@
+c  WWGen Test
+c
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c CSG Cell Definitions
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c
+c
+  100   1 -0.001205    -1 2 3 imp:n = 1
+  110   1 -0.001205    -3     imp:n = 1 
+  120   2 -2.35        -2     imp:n = 1 
+c Graveyard
+ 9990   0               1     imp:n = 0 
+
+c
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c Surface Definitions
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c
+    1    rpp  -100.0  100.0 -100.0  100.0 -100.0  100.0  
+    2    rpp   -30.0   30.0 -100.0  100.0 -100.0  100.0  
+    3     sx    60.0    5.0
+
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c Problem Definitions
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c Physics
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c
+mode n
+c
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c  Material Definitions
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c
+m1       1001    -0.022100                $ Concrete, Ordinary 
+         6000    -0.002484                $ PNNL-15870, Rev. 1 
+         8016    -0.574930                $   2.35 g/cc 
+        11023    -0.015208   
+        12000    -0.001266   
+        13027    -0.019953   
+        14000    -0.304627   
+        19000    -0.010045   
+        20000    -0.042951   
+        26000    -0.006435   
+c      
+m2       6000    -0.000124                $ Air, Dry, Near Sea Level
+         7014    -0.755268                $ PNNL-15870, Rev. 1
+         8016    -0.231781                $ 0.001205 g/cc
+        18000    -0.012827 
+c
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c Source Definition
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c
+sdef   erg=1.000 pos=-75.000 0 0 axs=1 0 0 ext=0 rad=d1 vec=1 0 0 dir=1 par=1
+       ara=706.858
+c
+si1 H   0 15
+sp1 D -21  1
+c
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c Neutron Tallies
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c
+f4:n 110
+f5:n 60.0 0.0 0.0 -1.0
+c
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c Weight Window
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c
+c wwp:n 5 3 5 0 -1 0 1 0
+wwg   4 0 0 j  j j j 0
+c wwge:n 0.01 0.1 1.0 10.0
+mesh     geom=  xyz
+          ref=  -75    0    0
+       origin= -100 -100 -100
+        imesh=  100
+        iints=    4
+        jmesh=  100
+        jints=    4
+        kmesh=  100
+        kints=    4
+c
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c Print & Go
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c
+print 
+rand gen=2 seed=3
+nps 1E5
+c
+ 
