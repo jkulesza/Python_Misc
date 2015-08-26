@@ -59,11 +59,11 @@ def get_mesh_definition_range(nxc, nyc, nzc, ne):
 
     # Determine lines of the wwinp file that various information falls on.
     xr.append(4)
-    xr.append(xr[0] + int(math.ceil(nxc * 4 / 6))-1)
+    xr.append(xr[0] + int(math.ceil((nxc * 3 + 1) / 6))-1)
     yr.append(xr[1] + 1)
-    yr.append(yr[0] + int(math.ceil(nyc * 4 / 6))-1)
+    yr.append(yr[0] + int(math.ceil((nyc * 3 + 1) / 6))-1)
     zr.append(yr[1] + 1)
-    zr.append(zr[0] + int(math.ceil(nzc * 4 / 6))-1)
+    zr.append(zr[0] + int(math.ceil((nzc * 3 + 1) / 6))-1)
     er.append(zr[1] + 1)
     er.append(er[0] + int(math.ceil(ne  * 1 / 6))-1)
     wr.append(er[1] + 1)
@@ -93,6 +93,8 @@ def extract_wwinp_data(wwinp):
 
     # Get dimension line ranges for the wwinp file.
     xr, yr, zr, er, wr = get_mesh_definition_range(nxc, nyc, nzc, ne)
+
+#   print(xr, yr, zr, er, wr)
 
     # Get number of mesh and mesh boundaries.
     x = create_1D_spatial_mesh(nxc, nxf, wwinp[xr[0]:xr[1]+1])
