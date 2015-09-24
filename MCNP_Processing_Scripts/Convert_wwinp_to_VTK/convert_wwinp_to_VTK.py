@@ -59,13 +59,13 @@ def get_mesh_definition_range(nxc, nyc, nzc, ne):
 
     # Determine lines of the wwinp file that various information falls on.
     xr.append(4)
-    xr.append(xr[0] + int(math.ceil((nxc * 3 + 1) / 6.))-1)
+    xr.append(xr[0] + int(math.ceil((nxc * 3 + 1) / 6))-0)
     yr.append(xr[1] + 1)
-    yr.append(yr[0] + int(math.ceil((nyc * 3 + 1) / 6.))-1)
+    yr.append(yr[0] + int(math.ceil((nyc * 3 + 1) / 6))-0)
     zr.append(yr[1] + 1)
-    zr.append(zr[0] + int(math.ceil((nzc * 3 + 1) / 6.))-1)
+    zr.append(zr[0] + int(math.ceil((nzc * 3 + 1) / 6))-0)
     er.append(zr[1] + 1)
-    er.append(er[0] + int(math.ceil(ne  * 1 / 6.))-1)
+    er.append(er[0] + int(math.ceil(ne  * 1 / 6))-0)
     wr.append(er[1] + 1)
 
     return xr, yr, zr, er, wr
