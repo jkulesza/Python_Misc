@@ -17,13 +17,14 @@ def write_VTP_file(outfilename,
                    energy_list, 
                    weight_list, 
                    cell_list,
-                   line_list,
+                   history_list,
+                   track_list,
                    connectivity_list, 
                    offset_list,
-                   numLines):
+                   joinStr = '\n          '):
 
     numPoints = str(len(point_list))
-    numLines = str(numLines)
+    numLines = str(len(connectivity_list))
 
     vtpfile = etree.Element('VTKFile', type="PolyData", version="0.1", byte_order="LittleEndian")
 
@@ -31,28 +32,27 @@ def write_VTP_file(outfilename,
 
     piece = etree.SubElement(polydata, 'Piece', NumberOfPoints=numPoints, NumberOfVerts="0", NumberOfLines=numLines, NumberOfStrips="0", NumberOfPolys="0")
     
-    pointdata = etree.SubElement(piece, 'PointData', Scalars="Scalars")
-    dataarray = etree.SubElement(pointdata, 'DataArray', type="Float32", Name="energy", format="ascii")
-    dataarray.text = ' '.join(energy_list)
-    dataarray = etree.SubElement(pointdata, 'DataArray', type="Float32", Name="weight", format="ascii")
-    dataarray.text = ' '.join(weight_list) 
-    dataarray = etree.SubElement(pointdata, 'DataArray', type="Float32", Name="cell", format="ascii")
-    dataarray.text = ' '.join(cell_list)
-
     celldata = etree.SubElement(piece, 'CellData', Scalars="Scalars")
-    dataarray = etree.SubElement(celldata, 'DataArray', type="Float32", Name="line", format="ascii")
-    dataarray.text = ' '.join(line_list) 
- 
+    dataarray = etree.SubElement(celldata, 'DataArray', type="Float32", Name="energy", format="ascii")
+    dataarray.text = '\n          ' + joinStr.join(energy_list) + '\n        '
+    dataarray = etree.SubElement(celldata, 'DataArray', type="Float32", Name="weight", format="ascii")
+    dataarray.text = '\n          ' + joinStr.join(weight_list) + '\n        '
+    dataarray = etree.SubElement(celldata, 'DataArray', type="Float32", Name="cell", format="ascii")
+    dataarray.text = '\n          ' + joinStr.join(cell_list) + '\n        '
+    dataarray = etree.SubElement(celldata, 'DataArray', type="Float32", Name="history", format="ascii")
+    dataarray.text = '\n          ' + joinStr.join(history_list) + '\n        '
+    dataarray = etree.SubElement(celldata, 'DataArray', type="Float32", Name="track", format="ascii")
+    dataarray.text = '\n          ' + joinStr.join(track_list) + '\n        '
 
     points = etree.SubElement(piece, 'Points')
     dataarray = etree.SubElement(points, 'DataArray', type="Float32", NumberOfComponents="3", format="ascii")
-    dataarray.text = ' '.join(point_list)
+    dataarray.text = '\n          ' + joinStr.join(point_list) + '\n        '
     
     lines= etree.SubElement(piece, 'Lines')
     dataarray = etree.SubElement(lines, 'DataArray', type="Float32", Name="connectivity", format="ascii")
-    dataarray.text = ' '.join(connectivity_list)
+    dataarray.text = '\n          ' + joinStr.join(connectivity_list) + '\n        '
     dataarray = etree.SubElement(lines, 'DataArray', type="Float32", Name="offsets", format="ascii")
-    dataarray.text = ' '.join(offset_list)
+    dataarray.text = '\n          ' + joinStr.join(offset_list) + '\n        '
   
     f = open(outfilename, 'w')
     f.write(etree.tostring(vtpfile, pretty_print=True).decode('UTF-8'))
@@ -63,7 +63,7 @@ def write_VTP_file(outfilename,
 # Get information for a given state within an event log entry
 def get_state_information(s):
     s = s.split(' ')
-    s = filter(None, s)
+    s = list(filter(None, s))
     sd = {}
     sd['type'] = s[0]
     sd['cell'] = s[1]
@@ -76,17 +76,19 @@ def get_state_information(s):
     sd['erg']  = s[8]
     sd['wgt']  = s[9]
 
-    for k,v in sd.iteritems():
+    for k,v in sd.items():
         sd[k] = re.sub(r'(\d\.\d+)([+-]\d+)', '\g<1>e\g<2>', v)
 
     return(sd)
 
 #########################
 
-def extract_event_log(outp = '', rm_surf = True):
+def extract_event_log(outp = ''):
 
-    event_list = re.findall(r'(event log for particle history no.*?)(?:\n \n|1problem)', outp, re.S)
+    event_list = re.finditer(r'(?=(1\s+event log.*?)\n1)', outp, re.S)
+    event_list = [event.group(1) for event in event_list]
 
+    segment = 0
     offset = 0
     numLines = 0
 
@@ -95,44 +97,50 @@ def extract_event_log(outp = '', rm_surf = True):
     energy_list = []
     weight_list = []
     cell_list = []
+    history_list = []
     line_list = []
 
     connectivity_list = []
     offset_list = []
 
-#   event_list = [event_list[0]]
-
     for e in event_list:
-        e = e.split('\n')
-        e = filter(None, e)
-        e = [ x for x in e if "event log" not in x ]
-        e = [ x for x in e if "cell" not in x ]
-        if(rm_surf):
-            e = [ x for x in e if "surf=" not in x ]
 
-        line_start = len(point_list)
+        history = re.search(r'no\.\s+(\d+)\s+', e).group(1)
+        track = 0
+        print('Found event log entry for history ' + history + '.')
 
-        for s in e:
-            s_dict = get_state_information(s)
-            pt = s_dict['x'] + ' ' + s_dict['y'] + ' ' + s_dict['z']
-            point_list.append(pt)
+        # Remove print table 110 entries.
+        e = re.sub(r'\n\s+\d+\s+.*$', '', e, re.M)
+        e = re.sub(r'\n\s+', r'\n', e)
+        e = re.sub(r'^.*?event log.*?\n', '', e, re.S)
+        e = re.sub(r'^.*?cell.*?\n', '', e, re.S)
+        e = re.sub(r'\s+\n+$', '', e, re.S)
 
-            energy_list.append(s_dict['erg'])
-            weight_list.append(s_dict['wgt'])
-            cell_list.append(s_dict['cell'])
+        # Find original and bank tracks in each history.        
+        track_list = re.finditer(r'(?=((?:source|bank).*?ter.*?)(?:\n|$))', e, re.S)
+        track_list = [track.group(1) for track in track_list]
 
-        line_list.append(str(numLines+1))
+        for t in track_list:
+            track = track + 1
+            print('Processing track ' + str(track) + '.')
 
-        line_stop = len(point_list)
+            for n, s in enumerate(t.split('\n')):
+                s_dict = get_state_information(s)
+                pt = s_dict['x'] + ' ' + s_dict['y'] + ' ' + s_dict['z']
+    
+                point_list.append(pt)
+                if(n != len(t)-1):
+                    energy_list.append(s_dict['erg'])
+                    weight_list.append(s_dict['wgt'])
+                    cell_list.append(s_dict['cell'])
+                    history_list.append(str(history))
+                    line_list.append(str(track))
+                    connectivity_list.append(str(segment) + ' ' + str(segment + 1))
+                    segment = segment + 1
+                    offset = offset + 2
+                    offset_list.append(str(offset))
 
-        for c in range(line_start, line_stop + 1):
-            connectivity_list.append(str(c))
-
-        offset = offset + line_stop + 1 - line_start
-        offset_list.append(str(offset))
-        numLines = numLines + 1
-
-    return(point_list, energy_list, weight_list, cell_list, line_list, connectivity_list, offset_list, numLines)
+    return(point_list, energy_list, weight_list, cell_list, history_list, line_list, connectivity_list, offset_list)
 
 # EXECUTE PROGRAM ##############################################################
 
@@ -148,15 +156,15 @@ if __name__ == "__main__":
         outp = myfile.read()
 
 
-    point_list, energy_list, weight_list, cell_list, line_list, connectivity_list, offset_list, numLines = extract_event_log(outp) 
+    point_list, energy_list, weight_list, cell_list, history_list, track_list, connectivity_list, offset_list = extract_event_log(outp) 
 
     write_VTP_file(infilename + '.vtp', 
                    point_list, 
                    energy_list, 
                    weight_list, 
                    cell_list,
-                   line_list,
+                   history_list,
+                   track_list,
                    connectivity_list, 
-                   offset_list,
-                   numLines)
+                   offset_list)
 
