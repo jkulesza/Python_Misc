@@ -122,23 +122,25 @@ def extract_event_log(outp = ''):
 
         for t in track_list:
             track = track + 1
-            print('Processing track ' + str(track) + '.')
 
             for n, s in enumerate(t.split('\n')):
                 s_dict = get_state_information(s)
+#               pt = str(len(t.split('\n'))) + ' : ' + str(track) + ' : ' + str(segment) + ' : ' + s_dict['x'] + ' ' + s_dict['y'] + ' ' + s_dict['z']
                 pt = s_dict['x'] + ' ' + s_dict['y'] + ' ' + s_dict['z']
-    
+
                 point_list.append(pt)
-                if(n != len(t)-1):
+                if(n < len(t.split('\n'))-1):
                     energy_list.append(s_dict['erg'])
                     weight_list.append(s_dict['wgt'])
                     cell_list.append(s_dict['cell'])
                     history_list.append(str(history))
                     line_list.append(str(track))
                     connectivity_list.append(str(segment) + ' ' + str(segment + 1))
-                    segment = segment + 1
                     offset = offset + 2
                     offset_list.append(str(offset))
+                segment = segment + 1
+
+        print('Processed ' + str(track) + ' track(s).')
 
     return(point_list, energy_list, weight_list, cell_list, history_list, line_list, connectivity_list, offset_list)
 

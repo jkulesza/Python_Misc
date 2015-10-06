@@ -1,0 +1,126 @@
+c  CH2-Moderated HEU Sphere                                                     
+c                                                                               
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c Cell Definitions                                                              
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c                                                                               
+   10  1 -18.724760   1    2     3   -10                       imp:n=1 imp:p=1 $
+   20  2  -0.93       1    2     3    10 -20                   imp:n=1 imp:p=1 $
+  100  4  -0.001205   1 -100     2  -220   3 -300   20         imp:n=1 imp:p=1 $
+  110  3  -2.3      100 -110     2  -210   3 -300              imp:n=1 imp:p=1 $
+  120  4  -0.001205 100 -110   210  -220   3 -300              imp:n=1 imp:p=1 $
+  130  4  -0.001205 110 -120     2  -220   3 -300 1000         imp:n=1 imp:p=1 $
+  300  3  -2.3        1 -120     2  -220 300 -310              imp:n=1 imp:p=1 $
+c                                                                               
+ 1000  4  -0.001205   1    2    3  -1000                       imp:n=1 imp:p=1 $
+c                                                                               
+c Graveyard                                                                     
+ 9991  0           -3                                          imp:n=0 imp:p=0  
+ 9992  0          310                                          imp:n=0 imp:p=0  
+ 9993  0            3  -310   -2                               imp:n=0 imp:p=0  
+ 9994  0            3  -310  220                               imp:n=0 imp:p=0  
+ 9995  0            3  -310    2  -220   -1                    imp:n=0 imp:p=0  
+ 9996  0            3  -310    2  -220  120                    imp:n=0 imp:p=0  
+                                                                                
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c Surface Definitions                                                           
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c                                                                               
+c                                                                               
+   *1     px     0.0                                                           $
+   *2     py     0.0                                                           $
+   *3     pz     0.0                                                           $
+c                                                                               
+   10     so     5.0                                                           $
+   20     so    10.0                                                           $
+c                                                                               
+  100    px  1000.0                                                             
+  110    px  1100.0                                                             
+  120    px  2000.0                                                             
+  200    py  1000.0                                                             
+  210    py  1100.0                                                             
+  220    py  2000.0                                                             
+  300    pz   300.0                                                             
+  310    pz   400.0                                                             
+c                                                                               
+ 1000    sx  1200.0 10.0                                                       $
+c                                                                               
+                                                                                
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c Physics                                                                       
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c                                                                               
+mode n p                                                                        
+c                                                                               
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c Source Definition                                                             
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c                                                                               
+sdef   cel = 10                                                                 
+       pos = 0 0 0                                                              
+       rad = d1                                                                 
+       erg = d2                                                                 
+       wgt = 1.0                                                                
+c                                                                               
+si1 H   0  5.                                                                   
+sp1 D -21  1                                                                    
+c                                                                               
+sp2 -3 0.988 2.249                                                              
+c                                                                               
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c Material Definitions                                                          
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c                                                                               
+m1       92234     0.009849                                                    $
+         92235     0.932166                                                    $
+         92236     0.004484                                                    $
+         92238     0.053501                                                     
+c                                                                               
+m2        1001     0.666662                                                    $
+          6000     0.333338                                                    $
+c                                                                              $
+c                                                                               
+m4        6000     0.000150                                                    $
+          7014     0.784431                                                    $
+          8016     0.210748                                                    $
+         18000     0.004671                                                     
+c                                                                               
+m3        1001     0.168038                                                    $
+          8016     0.563183                                                    $
+         11023     0.021365                                                    $
+         13027     0.021343                                                     
+         14000     0.203231                                                     
+         20000     0.018595                                                     
+         26000     0.004246                                                     
+c                                                                               
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c Neutron Tallies                                                               
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c                                                                               
+f104:n 1000                                                                     
+sd104 4188.79                                                                   
+c                                                                               
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c Photon Tallies                                                                
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c                                                                               
+f114:p 1000                                                                     
+sd114 4118.79                                                                   
+c                                                                               
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c Weight Window Parameters                                                      
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c                                                                               
+c wwp:n 5.0 j 100 j -1 0 4.923880473e-01                                          
+c wwp:p 5.0 j 100 j -1 0 4.923880473e-01                                          
+c                                                                               
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c Print & Go                                                                    
+c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c                                                                               
+print                                                                           
+dbcn 2j 1 2
+nps 10                                                                         
+c ctme 60                                                                       
+c nps 1E3                                                                       
+c                                                                               
