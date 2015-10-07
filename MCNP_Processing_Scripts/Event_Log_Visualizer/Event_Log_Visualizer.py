@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 # IMPORT PACKAGES ##############################################################
 
 from lxml import etree
