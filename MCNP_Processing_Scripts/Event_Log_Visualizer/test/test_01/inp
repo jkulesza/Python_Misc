@@ -4,7 +4,7 @@ c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c Cell Definitions
 c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c
-  100  51 -10.         1    -2     3    -4     5    -6    10
+  100  51 -1.0         1    -2     3    -4     5    -6    10
   200  0             -10
 c Graveyard
  9990  0              -1
@@ -43,7 +43,14 @@ c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c Material Definitions
 c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c
-m51      92235    -1.000000                                                    $ Pure U-235
+m51       1001    -0.115111                                                    $ BOC Coolant
+          5010    -0.000199                                                    $ Nominal Density: Variable
+          5011    -0.000810                                                    $ Abundances: [Assumed]
+          8016    -0.883889                                                    $
+c                                                                              $
+c                                                                              $
+mt51               lwtr.04t                                                    $ S(a,b) @ 600k
+c                                                                              $
 c
 c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c  Cell Importances/Splitting
@@ -57,13 +64,13 @@ c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c
 f1:n 10
 c1 0. 1.
-fu1 0 1 2 3 4 5 6 7 8 9 10 100 1000 10000 100000 1000000 10000000  
+fu1 0 1 2 3 4 5 6 7 8 9 10 100 1000 10000 100000 1000000 10000000
 ft1 inc
 c
 f4:n 100
 sd4 1.00
-fu4 0 1 2 3 4 5 6 7 8 9 10 100 1000 10000 100000 1000000 10000000 
-ft4 inc 
+fu4 0 1 2 3 4 5 6 7 8 9 10 100 1000 10000 100000 1000000 10000000
+ft4 inc
 c
 c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c Print & Go

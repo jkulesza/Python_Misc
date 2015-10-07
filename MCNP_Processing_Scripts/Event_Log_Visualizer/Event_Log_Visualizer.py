@@ -10,8 +10,6 @@ import re
 
 # DEFINE CONSTANTS #############################################################
 
-
-
 # DEFINE FUNCTIONS #############################################################
 
 def write_VTP_file(outfilename, 
@@ -107,9 +105,14 @@ def extract_event_log(outp = ''):
 
     for e in event_list:
 
+
         history = re.search(r'no\.\s+(\d+)\s+', e).group(1)
         track = 0
         print('Found event log entry for history ' + history + '.')
+
+        if(re.search(r'event printing is terminated', e)):
+            print('WARNING: History printing aborted early due to length limitation.  Removing truncated track.')
+            e = re.sub(r'event printing.*(\n*.*\n*)*', r'', e, re.S)
 
         # Remove print table 110 entries.
         e = re.sub(r'\n\s+\d+\s+.*$', '', e, re.M)

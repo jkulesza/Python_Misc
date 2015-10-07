@@ -70,7 +70,7 @@ c Print & Go
 c cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c
 print
-dbcn 2j 1 1
+dbcn 2j 1 10
 nps 100
 c
 

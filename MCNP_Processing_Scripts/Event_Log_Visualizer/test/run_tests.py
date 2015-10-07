@@ -10,7 +10,9 @@ test_exec = 'Event_Log_Visualizer.py'
 # Any special test case options to execute with
 test_opts = {'test_01': 'outp',
              'test_02': 'outp',
-             'test_03': 'outp'}
+             'test_03': 'outp',
+             'test_04': 'outp',
+             'test_05': 'outp'}
 
 ################################################################################
 # Wrapper to run shell commands and report output interactively.
@@ -50,7 +52,7 @@ def make_test_cases(tests):
 ################################################################################
 # Clean all test subdirectories.
 def clean_test_case_dirs():
-    rm_list = ['*.vtp', test_exec]
+    rm_list = ['*.vtp', '*.stdout', test_exec]
     for r in rm_list:
         runcmd('rm -rf test_*/' + r)
     return
