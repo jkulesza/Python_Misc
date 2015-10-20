@@ -105,14 +105,17 @@ def extract_event_log(outp = ''):
 
     for e in event_list:
 
-
         history = re.search(r'no\.\s+(\d+)\s+', e).group(1)
-        track = 0
+        track_num = 0
         print('Found event log entry for history ' + history + '.')
 
         if(re.search(r'event printing is terminated', e)):
             print('WARNING: History printing aborted early due to length limitation.  Removing truncated track.')
             e = re.sub(r'event printing.*(\n*.*\n*)*', r'', e, re.S)
+
+        if(re.search(r'warning\.  weight of source particle is above window\.', e)):
+            print('WARNING: Weight of source particle is above window.')
+            e = re.sub(r'\n.*?warning.*?\n', r'\n', e, re.S)
 
         # Remove print table 110 entries.
         e = re.sub(r'\n\s+\d+\s+.*$', '', e, re.M)
@@ -126,7 +129,7 @@ def extract_event_log(outp = ''):
         track_list = [track.group(1) for track in track_list]
 
         for t in track_list:
-            track = track + 1
+            track_num = track_num + 1
 
             for n, s in enumerate(t.split('\n')):
                 s_dict = get_state_information(s)
@@ -139,13 +142,13 @@ def extract_event_log(outp = ''):
                     weight_list.append(s_dict['wgt'])
                     cell_list.append(s_dict['cell'])
                     history_list.append(str(history))
-                    line_list.append(str(track))
+                    line_list.append(str(track_num))
                     connectivity_list.append(str(segment) + ' ' + str(segment + 1))
                     offset = offset + 2
                     offset_list.append(str(offset))
                 segment = segment + 1
 
-        print('Processed ' + str(track) + ' track(s).')
+        print('Processed ' + str(track_num) + ' track(s).')
 
     return(point_list, energy_list, weight_list, cell_list, history_list, line_list, connectivity_list, offset_list)
 
