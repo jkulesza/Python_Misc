@@ -116,6 +116,7 @@ def extract_event_log(outp = ''):
         if(re.search(r'warning\.  weight of source particle is above window\.', e)):
             print('WARNING: Weight of source particle is above window.')
             e = re.sub(r'\n.*?warning.*?\n', r'\n', e, re.S)
+            e = re.sub(r'\n.*?nps =.*?\n', r'\n', e, re.S)
 
         # Remove print table 110 entries.
         e = re.sub(r'\n\s+\d+\s+.*$', '', e, re.M)
