@@ -1,9 +1,5 @@
 #!/usr/bin/python
 #
-# Tested with Python 2.7.3
-#                    2.7.5
-#                    2.7.6
-#
 # The MIT License (MIT)
 #
 # Copyright (c) 2015 Joel A. Kulesza
@@ -31,7 +27,8 @@ def Make_Notebook(twoSided = True, keepHolePunchMargin = False, showHolePunchMar
                     showDots = True, showRoundDots = False, showGrid = False,
                     showDate = True, showName = True, showMarginInfo = False,
                     showMarginFortune = False, showPageNumber = True,
-                    textName = "Your Name", pageFirst = 1, pageTotal = 10):
+                    textName = "Your Name", textMarginInfo = '',
+                    pageFirst = 1, pageTotal = 1):
 
     from pyx import *
     import numpy as np
@@ -79,9 +76,9 @@ def Make_Notebook(twoSided = True, keepHolePunchMargin = False, showHolePunchMar
     colorBorderGreen = 0.85
     colorBorderBlue  = 0.85
 
-    colorDotRed      = 0.50
-    colorDotGreen    = 0.50
-    colorDotBlue     = 0.50
+    colorDotRed      = 0.00
+    colorDotGreen    = 0.00
+    colorDotBlue     = 0.00
 
     colorGridRed     = 0.985
     colorGridGreen   = 0.985
@@ -268,3 +265,85 @@ def Make_Notebook(twoSided = True, keepHolePunchMargin = False, showHolePunchMar
     # Create a PDF of the document.
     d.writePDFfile("Notebook_Pages_" + datetime.datetime.strftime(datetime.datetime.now(), "%Y_%m_%d_") + str(pageFirst) + "-" + str(pageFirst + pageTotal - 1) + ".pdf")
 
+################################################################################
+# Command line options.
+################################################################################
+import __main__ as main
+if(__name__ == '__main__' and hasattr(main, '__file__')):
+    import textwrap, argparse
+    description = textwrap.dedent(
+    """
+    This script creates a series of pages suitable for printing and using as 
+    notepaper within a notebook.
+    """)
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument('--pages', '-p',
+                        type = int,
+                        default = 1,
+                        help = 'how many pages to generate (default 1)')
+    parser.add_argument('--start', '-s',
+                        type = int,
+                        default = 1,
+                        help = 'starting page number (default 1)')
+    parser.add_argument('--two_sided',
+                        action = 'store_true', 
+                        default = False,
+                        dest = 'two_sided',
+                        help = 'generate two sided pages (default false)')
+    parser.add_argument('--hole_punch',
+                        action = 'store_true', 
+                        default = False,
+                        help = 'create a margin to allow hole punches (default false)')
+    parser.add_argument('--show_hole_punch_marks',
+                        action = 'store_true', 
+                        default = False,
+                        help = 'show representative hole punch marks (default false)')
+    parser.add_argument('--show_dots',
+                        action = 'store_true', 
+                        default = True,
+                        help = 'show dot grid (default true)')
+    parser.add_argument('--show_round_dots',
+                        action = 'store_true', 
+                        default = False,
+                        help = 'show round dots --- more memory needed (default false)')
+    parser.add_argument('--show_grid',
+                        action = 'store_true', 
+                        default = False,
+                        help = 'show square grid lines (default false)')
+    parser.add_argument('--show_date',
+                        action = 'store_true', 
+                        default = False,
+                        help = 'show date field label (default false)')
+    parser.add_argument('--show_name',
+                        action = 'store_true', 
+                        default = False,
+                        help = 'show name field (default false)')
+    parser.add_argument('--name',
+                        default = '',
+                        help = 'name text (default "")')
+    parser.add_argument('--show_margin_info',
+                        action = 'store_true', 
+                        default = False,
+                        help = 'show margin information (default false)') 
+    parser.add_argument('--margin_info',
+                        default = '',
+                        help = 'margin information (default "")') 
+       
+    args = parser.parse_args()
+
+    if(args.name != ''): args.show_name = True
+
+    Make_Notebook(twoSided = args.two_sided,
+                    pageFirst = args.start,
+                    pageTotal = args.pages,
+                    keepHolePunchMargin = args.hole_punch,
+                    showHolePunchMarks = args.show_hole_punch_marks,
+                    showDots = args.show_dots,
+                    showRoundDots = args.show_round_dots,
+                    showGrid = args.show_grid,
+                    showDate = args.show_date,
+                    showName = args.show_name,
+                    textName = args.name,
+                    showMarginInfo = args.show_margin_info,
+                    textMarginInfo = args.margin_info)
+ 
