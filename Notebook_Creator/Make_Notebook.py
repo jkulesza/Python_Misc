@@ -76,9 +76,9 @@ def Make_Notebook(twoSided = True, keepHolePunchMargin = False, showHolePunchMar
     colorBorderGreen = 0.85
     colorBorderBlue  = 0.85
 
-    colorDotRed      = 0.00
-    colorDotGreen    = 0.00
-    colorDotBlue     = 0.00
+    colorDotRed      = 0.50
+    colorDotGreen    = 0.50
+    colorDotBlue     = 0.50
 
     colorGridRed     = 0.985
     colorGridGreen   = 0.985
