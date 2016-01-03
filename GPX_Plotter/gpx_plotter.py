@@ -8,11 +8,12 @@ from matplotlib import cm, colors, ticker, rc
 import numpy as np
 import pylab
 
+################################################################################
 # Set plot aspect ratio to 'the golden ratio.'
 fig_width     = 6.5
 golden_ratio  = (np.sqrt(5)-1.0)/2.0
 fig_height    = fig_width*golden_ratio
-fig_size      =  [fig_width,fig_height]
+fig_size      = [fig_width,fig_height]
 fig_font_size = 14
 
 rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
@@ -35,11 +36,13 @@ params        = { 'axes.labelsize' : fig_font_size,
 
 pylab.rcParams.update(params)  
 
+################################################################################
 # Conversion constants.
 class constants:
     meters2feet = 1 / 0.3048 # Convert meters -> feet
     EarthRad = 3959 # feet
 
+################################################################################
 # Smoothing functions.
 # See: http://stackoverflow.com/questions/28536191/how-to-filter-smooth-with-scipy-numpy
 from scipy.signal import butter, filtfilt
@@ -55,6 +58,7 @@ def butter_lowpass_filtfilt(data, cutoff, fs, order=5):
     y = filtfilt(b, a, data)
     return y
  
+################################################################################
 # Import RunKeeper GPX raw data.
 def importGPX(infilename):
     import xml.etree.ElementTree
@@ -124,6 +128,180 @@ def processRawTrack(rawtrk):
 
     return(trk)
 
+def plotElevation(trk, smoothed=True,
+                    xlabel='Time [H:MM:SS]', ylabel='Elevation [feet]'):
+    import datetime
+    plt.figure()
+    ax = plt.gca()
+
+    x = [t['elap'] for t in trk]
+    y = [t['ele'] for t in trk]
+    f = butter_lowpass_filtfilt(y, 5000, 50000)
+
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+
+#   d = [t['s'] for t in trk]
+#   d = '{:.2f}'.format(sum(d))
+#   plt.title('Distance: {:} miles, Time: {:}'.format(d, datetime.timedelta(seconds=x[-1])))
+
+    if(smoothed):
+        plt.plot(x, f, 'k-')
+    else:
+        plt.plot(x, y, 'r-')
+
+    plt.xticks(np.arange(min(x), max(x)+1, 150.0))
+
+    def timeTicks(x, pos):                                                                                                                                                                                                                                                         
+        d = datetime.timedelta(seconds=x)                                                                                                                                                                                                                                          
+        return str(d)                                                                                                                                                                                                                                                              
+    formatter = matplotlib.ticker.FuncFormatter(timeTicks)                                                                                                                                                                                                                         
+    ax.xaxis.set_major_formatter(formatter)  
+    for tick in ax.get_xticklabels():
+        tick.set_rotation(45)
+
+    return(plt)
+
+def plotSpeed(trk, smoothed=True,
+                    xlabel='Time [H:MM:SS]', ylabel='Speed [mph]'):
+    import datetime
+    plt.figure()
+    ax = plt.gca()
+
+    x = [t['elap'] for t in trk]
+    y = [t['ds'] for t in trk]
+    f = butter_lowpass_filtfilt(y, 5000, 50000)
+
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+
+#   d = [t['s'] for t in trk]
+#   d = '{:.2f}'.format(sum(d))
+#   plt.title('Distance: {:} miles, Time: {:}'.format(d, datetime.timedelta(seconds=x[-1])))
+
+    if(smoothed):
+        plt.plot(x, f, 'k-')
+    else:
+        plt.plot(x, y, 'r-')
+ 
+    plt.xticks(np.arange(min(x), max(x)+1, 150.0))
+
+    def timeTicks(x, pos):                                                                                                                                                                                                                                                         
+        d = datetime.timedelta(seconds=x)                                                                                                                                                                                                                                          
+        return str(d)                                                                                                                                                                                                                                                              
+    formatter = matplotlib.ticker.FuncFormatter(timeTicks)                                                                                                                                                                                                                         
+    ax.xaxis.set_major_formatter(formatter)  
+    for tick in ax.get_xticklabels():
+        tick.set_rotation(45)
+
+    return(plt)
+
+def getOSM(xmin, xmax, ymin, ymax):
+    import math
+    import os
+    import shutil
+    import urllib.request
+
+    zoom = 17
+    def deg2num(lon, lat, zoom):
+        lat_rad = math.radians(lat)
+        n = 2.0 ** zoom
+        xtile = int((lon + 180.0) / 360.0 * n)
+        ytile = int((1.0 - math.log(math.tan(lat_rad) + (1 / math.cos(lat_rad))) / math.pi) / 2.0 * n)
+        return (xtile, ytile, zoom)
+    def num2deg(xtile, ytile, zoom):
+        n = 2.0 ** zoom
+        lon = xtile / n * 360.0 - 180.0
+        lat_rad = math.atan(math.sinh(math.pi * (1 - 2 * ytile / n)))
+        lat = math.degrees(lat_rad)
+        return (lon, lat)
+
+    x, y, z = deg2num(xmin, ymax, zoom)
+    xmin, ymax = num2deg(x, y, z)        
+    xtmin = x; ytmin = y
+    x, y, z = deg2num(xmax, ymin, zoom)
+    xmax, ymin = num2deg(x+1, y+1, z)        
+    xtmax = x+1; ytmax = y+1
+
+    mapname = 'map_{:}_{:}-{:}_{:}-{:}.png'.format(zoom, xtmin, xtmax, ytmin, ytmax)
+
+    ar = (ytmax-ytmin)/(xtmax-xtmin)
+     
+    if(not os.path.exists(mapname)):
+        # Retreive images from OpenStreetMap.org
+        i = 1
+        for y in range(ytmin, ytmax):
+            for x in range(xtmin, xtmax):
+                url = 'http://a.tile.openstreetmap.org/'+str(z)+'/'+str(x)+'/'+str(y)+'.png'
+                subfilename = 'submap-{i:02d}-{x:d}-{y:d}.png'.format(i=i,x=x,y=y)
+                with urllib.request.urlopen(url) as response, open(subfilename, 'wb') as out_file:
+                    shutil.copyfileobj(response, out_file)
+                i = i + 1
+
+        # Composite together images.
+        cmd = '/sw/bin/montage submap*.png -tile 5x -geometry 256x256+0+0 ' + mapname
+        os.popen(cmd).read()
+
+        # Remove submaps.
+        os.popen('rm submap*png').read()
+
+    return(xmin, xmax, ymin, ymax, mapname, ar)
+ 
+def plotSpeedMap(trk, smoothed=True):
+    import datetime
+    from matplotlib.collections import LineCollection
+    from matplotlib.colors import ListedColormap
+    import matplotlib.image as mpimg
+
+
+    x = [t['lon'] for t in trk]
+    y = [t['lat'] for t in trk]
+    z = [t['ds'] for t in trk]
+    f = butter_lowpass_filtfilt(z, 5000, 50000)
+
+    pts = np.array([x, y]).T.reshape(-1,1,2)
+    segments = np.hstack([pts[:-1], pts[1:]])     
+    
+    coll = LineCollection(segments, cmap=plt.cm.jet, linewidth=2)
+
+    f = f/np.max(f)
+    coll.set_array(f)
+
+    # Get extents based on the track.
+    xmin = min(x); xmax = max(x)
+    ymin = min(y); ymax = max(y)
+    xdel = xmax - xmin
+    ydel = ymax - ymin
+    xmin = xmin - 0.05 * xdel; xmax = xmax + 0.05 * xdel
+    ymin = ymin - 0.05 * ydel; ymax = ymax + 0.05 * ydel
+
+    # Get new extents based on OSM's tiling, to ensure alignment.
+    xmin, xmax, ymin, ymax, mapname, ar = getOSM(xmin, xmax, ymin, ymax)
+
+    plt.figure()
+    ax = plt.gca()
+    ax.set_aspect(ar)
+
+    img = mpimg.imread(mapname)
+
+    implt = plt.imshow(img, zorder=0, extent=[xmin, xmax, ymin, ymax], aspect=ar, alpha=0.5) 
+    ax.add_collection(coll)
+
+    # Final reset of the extents to focus on the track despite OSM's tiling.
+    xmin = min(x); xmax = max(x)
+    ymin = min(y); ymax = max(y)
+    xdel = xmax - xmin
+    ydel = ymax - ymin
+    xmin = xmin - 0.05 * xdel; xmax = xmax + 0.05 * xdel
+    ymin = ymin - 0.05 * ydel; ymax = ymax + 0.05 * ydel
+ 
+    plt.xlim([xmin, xmax])
+    plt.ylim([ymin, ymax])
+ 
+    ax.set_xticks([])
+    ax.set_yticks([])
+    return(plt)
+ 
 ################################################################################
 # Command line options.
 ################################################################################
@@ -154,68 +332,13 @@ if(__name__ == '__main__' and hasattr(main, '__file__')):
 rawtrk = importGPX(infilename)
 trk = processRawTrack(rawtrk)
 
-# Plot elevation data.
 if(args.elevation):
-    import datetime
-    plt.figure()
-    ax = plt.gca()
-
-    x = [t['elap'] for t in trk]
-    y = [t['ele'] for t in trk]
-    f = butter_lowpass_filtfilt(y, 5000, 50000)
-
-    plt.xlabel('Time [H:MM:SS]')
-    plt.ylabel('Elevation [feet]')
-
-    d = [t['s'] for t in trk]
-    d = '{:.2f}'.format(sum(d))
-    plt.title('Distance: {:} miles, Time: {:}'.format(d, datetime.timedelta(seconds=x[-1])))
-
-#   plt.plot(x, y, 'r-')
-    plt.plot(x, f, 'k-')
-
-    plt.xticks(np.arange(min(x), max(x)+1, 150.0))
-
-    def timeTicks(x, pos):                                                                                                                                                                                                                                                         
-        d = datetime.timedelta(seconds=x)                                                                                                                                                                                                                                          
-        return str(d)                                                                                                                                                                                                                                                              
-    formatter = matplotlib.ticker.FuncFormatter(timeTicks)                                                                                                                                                                                                                         
-    ax.xaxis.set_major_formatter(formatter)  
-    for tick in ax.get_xticklabels():
-        tick.set_rotation(45)
-
+    plt = plotElevation(trk)
     plt.savefig(infilename + '_elevation.png', dpi=300)
-
-# Plot speed data.
 if(args.speed):
-    import datetime
-    plt.figure()
-    ax = plt.gca()
-
-    x = [t['elap'] for t in trk]
-    y = [t['ds'] for t in trk]
-    f = butter_lowpass_filtfilt(y, 5000, 50000)
-
-    plt.xlabel('Time [H:MM:SS]')
-    plt.ylabel('Speed [mph]')
-
-    d = [t['s'] for t in trk]
-    d = '{:.2f}'.format(sum(d))
-    plt.title('Distance: {:} miles, Time: {:}'.format(d, datetime.timedelta(seconds=x[-1])))
- 
-#   plt.plot(x, y, 'r-')
-    plt.plot(x, f, 'k-')
-
-    plt.xticks(np.arange(min(x), max(x)+1, 150.0))
-
-    def timeTicks(x, pos):                                                                                                                                                                                                                                                         
-        d = datetime.timedelta(seconds=x)                                                                                                                                                                                                                                          
-        return str(d)                                                                                                                                                                                                                                                              
-    formatter = matplotlib.ticker.FuncFormatter(timeTicks)                                                                                                                                                                                                                         
-    ax.xaxis.set_major_formatter(formatter)  
-    for tick in ax.get_xticklabels():
-        tick.set_rotation(45)
-
+    plotSpeed(trk)
     plt.savefig(infilename + '_speed.png', dpi=300)
 
+plotSpeedMap(trk)
+plt.savefig(infilename + '_speedmap.png', dpi=500)
  
