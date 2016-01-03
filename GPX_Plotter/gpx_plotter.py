@@ -248,11 +248,11 @@ def getOSM(xmin, xmax, ymin, ymax):
     return(xmin, xmax, ymin, ymax, mapname, ar)
  
 def plotSpeedMap(trk, smoothed=True):
+    from cmap_parula import cmap_parula
     import datetime
     from matplotlib.collections import LineCollection
     from matplotlib.colors import ListedColormap
     import matplotlib.image as mpimg
-
 
     x = [t['lon'] for t in trk]
     y = [t['lat'] for t in trk]
@@ -261,10 +261,9 @@ def plotSpeedMap(trk, smoothed=True):
 
     pts = np.array([x, y]).T.reshape(-1,1,2)
     segments = np.hstack([pts[:-1], pts[1:]])     
-    
-    coll = LineCollection(segments, cmap=plt.cm.jet, linewidth=2)
 
-    f = f/np.max(f)
+    cmap = cmap_parula().parula
+    coll = LineCollection(segments, cmap=cmap, linewidth=2)
     coll.set_array(f)
 
     # Get extents based on the track.
@@ -278,14 +277,17 @@ def plotSpeedMap(trk, smoothed=True):
     # Get new extents based on OSM's tiling, to ensure alignment.
     xmin, xmax, ymin, ymax, mapname, ar = getOSM(xmin, xmax, ymin, ymax)
 
-    plt.figure()
+    fig, ax = plt.subplots()
+
     ax = plt.gca()
     ax.set_aspect(ar)
 
     img = mpimg.imread(mapname)
 
-    implt = plt.imshow(img, zorder=0, extent=[xmin, xmax, ymin, ymax], aspect=ar, alpha=0.5) 
-    ax.add_collection(coll)
+    implt = plt.imshow(img, zorder=0, extent=[xmin, xmax, ymin, ymax], aspect=ar, alpha=0.4) 
+    cs = ax.add_collection(coll)
+
+    fig.colorbar(cs, ax=ax, shrink=1.0, label='Speed [mph]')
 
     # Final reset of the extents to focus on the track despite OSM's tiling.
     xmin = min(x); xmax = max(x)
