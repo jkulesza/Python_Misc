@@ -254,11 +254,27 @@ def plotSpeedMap(trk, smoothed=True):
     from matplotlib.colors import ListedColormap
     import matplotlib.image as mpimg
 
-    x = [t['lon'] for t in trk]
-    y = [t['lat'] for t in trk]
-    z = [t['ds'] for t in trk]
+    x = np.array([t['lon'] for t in trk])
+    y = np.array([t['lat'] for t in trk])
+    z = np.array([t['ds'] for t in trk])
     f = butter_lowpass_filtfilt(z, 5000, 50000)
-
+    # Remove duplicate positions to allow spline interpolation.
+    # Uncomment section and use last line to have smooth path but with
+    # smoothed speed values.
+#   from scipy import interpolate
+#   mask = ((np.diff(x) == 0) & (np.diff(y) == 0))
+#   x = x[~mask]
+#   y = y[~mask]
+#   f = f[~mask]
+#   tck1, u = interpolate.splprep([x,y], s=0)
+#   tck2, u = interpolate.splprep([x,f], s=0)
+#   unew = np.linspace(0,1,500)
+#   out1 = interpolate.splev(unew,tck1)
+#   out2 = interpolate.splev(unew,tck2)
+#   x = out1[0]
+#   y = out1[1]
+#   f = out2[1]
+#   pts = np.array([x, y]).T.reshape(-1,2,2)
     pts = np.array([x, y]).T.reshape(-1,1,2)
     segments = np.hstack([pts[:-1], pts[1:]])     
 
