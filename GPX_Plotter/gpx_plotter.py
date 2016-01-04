@@ -14,7 +14,7 @@ fig_width     = 6.5
 golden_ratio  = (np.sqrt(5)-1.0)/2.0
 fig_height    = fig_width*golden_ratio
 fig_size      = [fig_width,fig_height]
-fig_font_size = 14
+fig_font_size = 10
 
 rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
 rc('text', usetex=True)
@@ -150,6 +150,9 @@ def plotElevation(trk, smoothed=True,
     else:
         plt.plot(x, y, 'r-')
 
+    labels = [i for i in plt.gca().get_yticks()]
+    plt.fill_between(x, f, labels[0], color='0.75')
+
     plt.xticks(np.arange(min(x), max(x)+1, 150.0))
 
     def timeTicks(x, pos):                                                                                                                                                                                                                                                         
@@ -239,7 +242,7 @@ def getOSM(xmin, xmax, ymin, ymax):
                 i = i + 1
 
         # Composite together images.
-        cmd = '/sw/bin/montage submap*.png -tile 5x -geometry 256x256+0+0 ' + mapname
+        cmd = '/sw/bin/montage submap*.png -tile ' + str(xtmax-xtmin) + 'x -geometry 256x256+0+0 ' + mapname
         os.popen(cmd).read()
 
         # Remove submaps.
@@ -303,7 +306,26 @@ def plotSpeedMap(trk, smoothed=True):
     implt = plt.imshow(img, zorder=0, extent=[xmin, xmax, ymin, ymax], aspect=ar, alpha=0.4) 
     cs = ax.add_collection(coll)
 
-    fig.colorbar(cs, ax=ax, shrink=1.0, label='Speed [mph]')
+
+    def fmt(x, pos):
+        import math
+        if(x > 0):
+            y = 60 / x
+            m = int(math.floor(y))
+            s = int((y - math.floor(y)) * 60)
+            return('{:d} ({:d}:{:02d})'.format(int(x), m, s))
+        else:
+            return('{:d}'.format(int(x)))
+    
+    fig.colorbar(cs, ax=ax, format=ticker.FuncFormatter(fmt), label='Speed [mph] (Pace [mm:ss/mi])')
+
+#   pos = cbar.ax.get_position()
+#   cbar.ax.set_aspect('auto')
+#   ax2 = cbar.ax.twinx()
+#   ax2.set_ylim([-2,1])    
+#   pos.x0 += 0.05
+#   cbar.ax.set_position(pos)
+#   ax2.set_position(pos)        
 
     # Final reset of the extents to focus on the track despite OSM's tiling.
     xmin = min(x); xmax = max(x)
@@ -319,7 +341,214 @@ def plotSpeedMap(trk, smoothed=True):
     ax.set_xticks([])
     ax.set_yticks([])
     return(plt)
+
+def plotElevationMap(trk, smoothed=True):
+    from cmap_parula import cmap_parula
+    import datetime
+    from matplotlib.collections import LineCollection
+    from matplotlib.colors import ListedColormap
+    import matplotlib.image as mpimg
+
+    x = np.array([t['lon'] for t in trk])
+    y = np.array([t['lat'] for t in trk])
+    z = np.array([t['ele'] for t in trk])
+    f = butter_lowpass_filtfilt(z, 5000, 50000)
+    pts = np.array([x, y]).T.reshape(-1,1,2)
+    segments = np.hstack([pts[:-1], pts[1:]])     
+
+    cmap = cmap_parula().parula
+    coll = LineCollection(segments, cmap=cmap, linewidth=2)
+    coll.set_array(f)
+
+    # Get extents based on the track.
+    xmin = min(x); xmax = max(x)
+    ymin = min(y); ymax = max(y)
+    xdel = xmax - xmin
+    ydel = ymax - ymin
+    xmin = xmin - 0.05 * xdel; xmax = xmax + 0.05 * xdel
+    ymin = ymin - 0.05 * ydel; ymax = ymax + 0.05 * ydel
+
+    # Get new extents based on OSM's tiling, to ensure alignment.
+    xmin, xmax, ymin, ymax, mapname, ar = getOSM(xmin, xmax, ymin, ymax)
+
+    fig, ax = plt.subplots()
+
+    ax = plt.gca()
+    ax.set_aspect(ar)
+
+    img = mpimg.imread(mapname)
+
+    implt = plt.imshow(img, zorder=0, extent=[xmin, xmax, ymin, ymax], aspect=ar, alpha=0.4) 
+    cs = ax.add_collection(coll)
+
+    fig.colorbar(cs, ax=ax, label='Elevation [feet]')
+
+    # Final reset of the extents to focus on the track despite OSM's tiling.
+    xmin = min(x); xmax = max(x)
+    ymin = min(y); ymax = max(y)
+    xdel = xmax - xmin
+    ydel = ymax - ymin
+    xmin = xmin - 0.05 * xdel; xmax = xmax + 0.05 * xdel
+    ymin = ymin - 0.05 * ydel; ymax = ymax + 0.05 * ydel
  
+    plt.xlim([xmin, xmax])
+    plt.ylim([ymin, ymax])
+ 
+    ax.set_xticks([])
+    ax.set_yticks([])
+    return(plt)
+
+def plotReport(trk):
+    from cmap_parula import cmap_parula
+    import datetime
+    from matplotlib.collections import LineCollection
+    from matplotlib.colors import ListedColormap
+    import matplotlib.image as mpimg
+    import numpy as np
+
+    fig = plt.figure()
+    gs = matplotlib.gridspec.GridSpec(2, 2, height_ratios=[1, 1], width_ratios=[1, 2], wspace=0.5) 
+    ax0 = plt.subplot(gs[0])
+
+    x = np.array([t['lon'] for t in trk])
+    y = np.array([t['lat'] for t in trk])
+    z = np.array([t['ds'] for t in trk])
+    f = butter_lowpass_filtfilt(z, 5000, 50000)
+    pts = np.array([x, y]).T.reshape(-1,1,2)
+    segments = np.hstack([pts[:-1], pts[1:]])     
+
+    cmap = cmap_parula().parula
+    coll = LineCollection(segments, cmap=cmap, linewidth=2)
+    coll.set_array(f)
+
+    # Get extents based on the track.
+    xmin = min(x); xmax = max(x)
+    ymin = min(y); ymax = max(y)
+    xdel = xmax - xmin
+    ydel = ymax - ymin
+    xmin = xmin - 0.05 * xdel; xmax = xmax + 0.05 * xdel
+    ymin = ymin - 0.05 * ydel; ymax = ymax + 0.05 * ydel
+
+    # Get new extents based on OSM's tiling, to ensure alignment.
+    xmin, xmax, ymin, ymax, mapname, ar = getOSM(xmin, xmax, ymin, ymax)
+
+    ax0.set_aspect(ar)
+
+    img = mpimg.imread(mapname)
+
+    implt = plt.imshow(img, zorder=0, extent=[xmin, xmax, ymin, ymax], aspect=ar, alpha=0.4) 
+    cs = ax0.add_collection(coll)
+
+    def fmt(x, pos):
+        import math
+        if(x > 0):
+            y = 60 / x
+            m = int(math.floor(y))
+            s = int((y - math.floor(y)) * 60)
+            return('{:d} ({:d}:{:02d})'.format(int(x), m, s))
+        else:
+            return('{:d}'.format(int(x)))
+    
+    fig.colorbar(cs, ax=ax0, format=ticker.FuncFormatter(fmt), label='Speed [mph]\n(Pace [mm:ss/mi])')
+
+    # Final reset of the extents to focus on the track despite OSM's tiling.
+    xmin = min(x); xmax = max(x)
+    ymin = min(y); ymax = max(y)
+    xdel = xmax - xmin
+    ydel = ymax - ymin
+    xmin = xmin - 0.05 * xdel; xmax = xmax + 0.05 * xdel
+    ymin = ymin - 0.05 * ydel; ymax = ymax + 0.05 * ydel
+ 
+    plt.xlim([xmin, xmax])
+    plt.ylim([ymin, ymax])
+ 
+    ax0.set_xticks([])
+    ax0.set_yticks([]) 
+
+    ax1 = plt.subplot(gs[1])
+    ax1.plot(y,x)
+
+    x = np.array([t['lon'] for t in trk])
+    y = np.array([t['lat'] for t in trk])
+    z = np.array([t['ele'] for t in trk])
+    f = butter_lowpass_filtfilt(z, 5000, 50000)
+    pts = np.array([x, y]).T.reshape(-1,1,2)
+    segments = np.hstack([pts[:-1], pts[1:]])     
+
+    cmap = cmap_parula().parula
+    coll = LineCollection(segments, cmap=cmap, linewidth=2)
+    coll.set_array(f)
+
+    # Get extents based on the track.
+    xmin = min(x); xmax = max(x)
+    ymin = min(y); ymax = max(y)
+    xdel = xmax - xmin
+    ydel = ymax - ymin
+    xmin = xmin - 0.05 * xdel; xmax = xmax + 0.05 * xdel
+    ymin = ymin - 0.05 * ydel; ymax = ymax + 0.05 * ydel
+
+    # Get new extents based on OSM's tiling, to ensure alignment.
+    xmin, xmax, ymin, ymax, mapname, ar = getOSM(xmin, xmax, ymin, ymax)
+
+    ax1.set_aspect(ar)
+
+    img = mpimg.imread(mapname)
+
+    implt = plt.imshow(img, zorder=0, extent=[xmin, xmax, ymin, ymax], aspect=ar, alpha=0.4) 
+    cs = ax1.add_collection(coll)
+
+    fig.colorbar(cs, ax=ax1, label='Elevation [feet]')
+
+    # Final reset of the extents to focus on the track despite OSM's tiling.
+    xmin = min(x); xmax = max(x)
+    ymin = min(y); ymax = max(y)
+    xdel = xmax - xmin
+    ydel = ymax - ymin
+    xmin = xmin - 0.05 * xdel; xmax = xmax + 0.05 * xdel
+    ymin = ymin - 0.05 * ydel; ymax = ymax + 0.05 * ydel
+ 
+    plt.xlim([xmin, xmax])
+    plt.ylim([ymin, ymax])
+ 
+    ax1.set_xticks([])
+    ax1.set_yticks([]) 
+
+    ax2 = plt.subplot(gs[2:])
+
+    x = [t['elap'] for t in trk]
+    y = [t['ds'] for t in trk]
+    f = butter_lowpass_filtfilt(y, 5000, 50000)
+
+    plt.xlabel('Elapsed Time [mm:ss]')
+    plt.ylabel('Speed [mph]')
+
+    ax2.plot(x, f, 'k-')
+ 
+    plt.xticks(np.arange(min(x), max(x)+1, 150.0))
+
+    def timeTicks(x, pos):                                                                                                                                                                                                                                                         
+        d = datetime.timedelta(seconds=x)                                                                                                                                                                                                                                          
+        return str(d)                                                                                                                                                                                                                                                              
+    formatter = matplotlib.ticker.FuncFormatter(timeTicks)                                                                                                                                                                                                                         
+    ax2.xaxis.set_major_formatter(formatter)  
+    for tick in ax2.get_xticklabels():
+        tick.set_rotation(45)
+
+    ax3 = ax2.twinx()
+
+    x = [t['elap'] for t in trk]
+    y = [t['ele'] for t in trk]
+    f = butter_lowpass_filtfilt(y, 5000, 50000)
+
+    plt.ylabel('Elevation [feet]')
+
+    plt.plot(x, f, 'k-', linewidth=0)
+
+    labels = [i for i in plt.gca().get_yticks()]
+    plt.fill_between(x, f, labels[0], color='0.75', alpha=0.5, zorder=0)
+
+    return(plt)
+
 ################################################################################
 # Command line options.
 ################################################################################
@@ -342,6 +571,18 @@ if(__name__ == '__main__' and hasattr(main, '__file__')):
                         default = False,
                         action='store_true',
                         help = 'plot speed data (default False)') 
+    parser.add_argument('--speedmap', '-sm',
+                        default = False,
+                        action='store_true',
+                        help = 'plot speed map data (default False)') 
+    parser.add_argument('--elevationmap', '-em',
+                        default = False,
+                        action='store_true',
+                        help = 'plot elevation map data (default False)') 
+    parser.add_argument('--report', '-r',
+                        default = False,
+                        action='store_true',
+                        help = 'plot report (default False)') 
     args = parser.parse_args()   
 
     infilename = args.infilename
@@ -354,9 +595,14 @@ if(args.elevation):
     plt = plotElevation(trk)
     plt.savefig(infilename + '_elevation.png', dpi=300)
 if(args.speed):
-    plotSpeed(trk)
+    plt = plotSpeed(trk)
     plt.savefig(infilename + '_speed.png', dpi=300)
-
-plotSpeedMap(trk)
-plt.savefig(infilename + '_speedmap.png', dpi=500)
- 
+if(args.speedmap):
+    plt = plotSpeedMap(trk)
+    plt.savefig(infilename + '_speedmap.png', dpi=500)
+if(args.elevationmap):
+    plt = plotElevationMap(trk)
+    plt.savefig(infilename + '_elevationmap.png', dpi=500)
+if(args.report):  
+    plt = plotReport(trk)
+    plt.savefig(infilename + '_report.png', dpi=500)
