@@ -352,7 +352,7 @@ def plotSpeedMap(trk, smoothed=True):
         else:
             return('{:d}'.format(int(x)))
     
-    add_colorbar(cs, ax=ax, format=ticker.FuncFormatter(fmt), label='Speed [mph] (Pace [mm:ss/mi])')
+    add_colorbar(cs, ax=ax, format=ticker.FuncFormatter(fmt), label='Speed [mph] (Pace [h:mm:ss/mi])')
 
 #   pos = cbar.ax.get_position()
 #   cbar.ax.set_aspect('auto')
