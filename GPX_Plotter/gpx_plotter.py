@@ -33,10 +33,10 @@ params        = { 'axes.labelsize' : fig_font_size,
                   'savefig.bbox'   : 'tight',
                   'text.usetex'    : True,
                   'xtick.labelsize': fig_font_size,
-                  'ytick.labelsize': fig_font_size,  
+                  'ytick.labelsize': fig_font_size,
 }
 
-pylab.rcParams.update(params)  
+pylab.rcParams.update(params)
 
 ################################################################################
 # Conversion constants.
@@ -59,7 +59,7 @@ def butter_lowpass_filtfilt(data, cutoff, fs, order=5):
     b, a = butter_lowpass(cutoff, fs, order=order)
     y = filtfilt(b, a, data)
     return y
- 
+
 ################################################################################
 # Import RunKeeper GPX raw data.
 def importGPX(infilename):
@@ -73,7 +73,7 @@ def importGPX(infilename):
         lon = float(trkpt.attrib['lon'])
         ele = float(trkpt.find('.//{http://www.topografix.com/GPX/1/1}ele').text)
         tme = trkpt.find('.//{http://www.topografix.com/GPX/1/1}time').text
-        tme = dateutil.parser.parse(tme) 
+        tme = dateutil.parser.parse(tme)
         trk.append({'lat': lat, 'lon': lon, 'ele': ele, 'tme': tme})
 
     return(trk)
@@ -89,12 +89,12 @@ def calcSpeedAndDistanceFromGPS(lat1, lon1, lat2, lon2, dt):
 
     a = math.sin(dLat/2) * math.sin(dLat/2) + \
         math.sin(dLon/2) * math.sin(dLon/2) * \
-        math.cos(lat1) * math.cos(lat2) 
+        math.cos(lat1) * math.cos(lat2)
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
     s = constants.EarthRad * c
     ds = s / dt
 
-    return(s, ds) 
+    return(s, ds)
 
 # Convert raw track data into preferred format.
 def processRawTrack(rawtrk):
@@ -108,21 +108,21 @@ def processRawTrack(rawtrk):
             t0 = t['tme']
             t['de'] = 0
             t['dt'] = 0
-            t['s']  = 0            
-            t['ds'] = 0            
+            t['s']  = 0
+            t['ds'] = 0
             t['elap'] = 0
         else:
-            dt = t['tme'] - rawtrk[n-1]['tme'] 
+            dt = t['tme'] - rawtrk[n-1]['tme']
             t['dt'] = dt
-            lat1 = rawtrk[n-1]['lat'] 
-            lon1 = rawtrk[n-1]['lon'] 
+            lat1 = rawtrk[n-1]['lat']
+            lon1 = rawtrk[n-1]['lon']
             lat2 = t['lat']
             lon2 = t['lon']
 
             dt = dt.total_seconds() / 3600
             s, ds = calcSpeedAndDistanceFromGPS(lat1, lon1, lat2, lon2, dt)
 
-            t['de'] = t['ele'] - rawtrk[n-1]['ele'] 
+            t['de'] = t['ele'] - rawtrk[n-1]['ele']
             t['s'] = s
             t['ds'] = ds
             t['elap'] = (t['tme'] - t0).total_seconds()
@@ -131,10 +131,10 @@ def processRawTrack(rawtrk):
     return(trk)
 
 # Time tick formatter function.
-def timeTicks(x, pos):                                                                                                                                                                                                                                                         
-    d = datetime.timedelta(seconds=x)                                                                                                                                                                                                                                          
-    return str(d)                                                                                                                                                                                                                                                              
- 
+def timeTicks(x, pos):
+    d = datetime.timedelta(seconds=x)
+    return str(d)
+
 def plotElevation(trk, smoothed=True,
                     xlabel='Time [h:mm:ss]', ylabel='Elevation [feet]'):
     plt.figure()
@@ -157,8 +157,8 @@ def plotElevation(trk, smoothed=True,
 
     plt.xticks(np.arange(min(x), max(x)+1, 150.0))
 
-    formatter = matplotlib.ticker.FuncFormatter(timeTicks)                                                                                                                                                                                                                         
-    ax.xaxis.set_major_formatter(formatter)  
+    formatter = matplotlib.ticker.FuncFormatter(timeTicks)
+    ax.xaxis.set_major_formatter(formatter)
     for tick in ax.get_xticklabels():
         tick.set_rotation(45)
 
@@ -180,11 +180,12 @@ def plotSpeed(trk, smoothed=True,
         plt.plot(x, f, 'k-')
     else:
         plt.plot(x, y, 'k.-')
- 
-    plt.xticks(np.arange(min(x), max(x)+1, 150.0))
 
-    formatter = matplotlib.ticker.FuncFormatter(timeTicks)                                                                                                                                                                                                                         
-    ax.xaxis.set_major_formatter(formatter)  
+    plt.xticks(np.arange(min(x), max(x)+1, 150.0))
+    plt.ylim(ymin=0)
+
+    formatter = matplotlib.ticker.FuncFormatter(timeTicks)
+    ax.xaxis.set_major_formatter(formatter)
     for tick in ax.get_xticklabels():
         tick.set_rotation(45)
 
@@ -209,11 +210,12 @@ def plotSpeedElevation(trk, smoothed=True,
         plt.plot(x, f1, 'k-')
     else:
         plt.plot(x, y1, 'k.-')
- 
-    plt.xticks(np.arange(min(x), max(x)+1, 150.0))
 
-    formatter = matplotlib.ticker.FuncFormatter(timeTicks)                                                                                                                                                                                                                         
-    ax1.xaxis.set_major_formatter(formatter)  
+    plt.xticks(np.arange(min(x), max(x)+1, 150.0))
+    plt.ylim(ymin=0)
+
+    formatter = matplotlib.ticker.FuncFormatter(timeTicks)
+    ax1.xaxis.set_major_formatter(formatter)
     for tick in ax1.get_xticklabels():
         tick.set_rotation(45)
 
@@ -255,16 +257,16 @@ def getOSM(xmin, xmax, ymin, ymax):
         return (lon, lat)
 
     x, y, z = deg2num(xmin, ymax, zoom)
-    xmin, ymax = num2deg(x, y, z)        
+    xmin, ymax = num2deg(x, y, z)
     xtmin = x; ytmin = y
     x, y, z = deg2num(xmax, ymin, zoom)
-    xmax, ymin = num2deg(x+1, y+1, z)        
+    xmax, ymin = num2deg(x+1, y+1, z)
     xtmax = x+1; ytmax = y+1
 
     mapname = 'map_{:}_{:}-{:}_{:}-{:}.png'.format(zoom, xtmin, xtmax, ytmin, ytmax)
 
     ar = (ytmax-ytmin)/(xtmax-xtmin)
-     
+
     if(not os.path.exists(mapname)):
         # Retreive images from OpenStreetMap.org
         i = 1
@@ -284,7 +286,7 @@ def getOSM(xmin, xmax, ymin, ymax):
         os.popen('rm submap*png').read()
 
     return(xmin, xmax, ymin, ymax, mapname, ar)
- 
+
 def plotSpeedMap(trk, smoothed=True):
     from cmap_parula import cmap_parula
     import datetime
@@ -314,7 +316,7 @@ def plotSpeedMap(trk, smoothed=True):
 #   f = out2[1]
 #   pts = np.array([x, y]).T.reshape(-1,2,2)
     pts = np.array([x, y]).T.reshape(-1,1,2)
-    segments = np.hstack([pts[:-1], pts[1:]])     
+    segments = np.hstack([pts[:-1], pts[1:]])
 
     cmap = cmap_parula().parula
     coll = LineCollection(segments, cmap=cmap, linewidth=2)
@@ -338,9 +340,8 @@ def plotSpeedMap(trk, smoothed=True):
 
     img = mpimg.imread(mapname)
 
-    implt = plt.imshow(img, zorder=0, extent=[xmin, xmax, ymin, ymax], aspect=ar, alpha=0.4) 
+    implt = plt.imshow(img, zorder=0, extent=[xmin, xmax, ymin, ymax], aspect=ar, alpha=0.4)
     cs = ax.add_collection(coll)
-
 
     def fmt(x, pos):
         import math
@@ -351,16 +352,16 @@ def plotSpeedMap(trk, smoothed=True):
             return('{:d} ({:d}:{:02d})'.format(int(x), m, s))
         else:
             return('{:d}'.format(int(x)))
-    
-    add_colorbar(cs, ax=ax, format=ticker.FuncFormatter(fmt), label='Speed [mph] (Pace [h:mm:ss/mi])')
 
+    add_colorbar(cs, ax=ax, format=ticker.FuncFormatter(fmt), label='Speed [mph] (Pace [h:mm:ss/mi])')
+    cs.set_clim(vmin=1, vmax=10)
 #   pos = cbar.ax.get_position()
 #   cbar.ax.set_aspect('auto')
 #   ax2 = cbar.ax.twinx()
-#   ax2.set_ylim([-2,1])    
+#   ax2.set_ylim([-2,1])
 #   pos.x0 += 0.05
 #   cbar.ax.set_position(pos)
-#   ax2.set_position(pos)        
+#   ax2.set_position(pos)
 
     # Final reset of the extents to focus on the track despite OSM's tiling.
     xmin = min(x); xmax = max(x)
@@ -369,10 +370,10 @@ def plotSpeedMap(trk, smoothed=True):
     ydel = ymax - ymin
     xmin = xmin - 0.05 * xdel; xmax = xmax + 0.05 * xdel
     ymin = ymin - 0.05 * ydel; ymax = ymax + 0.05 * ydel
- 
+
     plt.xlim([xmin, xmax])
     plt.ylim([ymin, ymax])
- 
+
     ax.set_xticks([])
     ax.set_yticks([])
     return(plt)
@@ -389,7 +390,7 @@ def plotElevationMap(trk, smoothed=True):
     z = np.array([t['ele'] for t in trk])
     f = butter_lowpass_filtfilt(z, 5000, 50000)
     pts = np.array([x, y]).T.reshape(-1,1,2)
-    segments = np.hstack([pts[:-1], pts[1:]])     
+    segments = np.hstack([pts[:-1], pts[1:]])
 
     cmap = cmap_parula().parula
     coll = LineCollection(segments, cmap=cmap, linewidth=2)
@@ -413,7 +414,7 @@ def plotElevationMap(trk, smoothed=True):
 
     img = mpimg.imread(mapname)
 
-    implt = plt.imshow(img, zorder=0, extent=[xmin, xmax, ymin, ymax], aspect=ar, alpha=0.4) 
+    implt = plt.imshow(img, zorder=0, extent=[xmin, xmax, ymin, ymax], aspect=ar, alpha=0.4)
     cs = ax.add_collection(coll)
 
     add_colorbar(cs, ax=ax, label='Elevation [feet]')
@@ -425,10 +426,10 @@ def plotElevationMap(trk, smoothed=True):
     ydel = ymax - ymin
     xmin = xmin - 0.05 * xdel; xmax = xmax + 0.05 * xdel
     ymin = ymin - 0.05 * ydel; ymax = ymax + 0.05 * ydel
- 
+
     plt.xlim([xmin, xmax])
     plt.ylim([ymin, ymax])
- 
+
     ax.set_xticks([])
     ax.set_yticks([])
     return(plt)
@@ -452,7 +453,7 @@ def plotReport(trk):
     import numpy as np
 
     fig = plt.figure()
-    gs = matplotlib.gridspec.GridSpec(2, 2, height_ratios=[2, 1], width_ratios=[1, 1], wspace=0.5) 
+    gs = matplotlib.gridspec.GridSpec(2, 2, height_ratios=[2, 1], width_ratios=[1, 1], wspace=0.5)
 
     # Plot speed map.
     ax0 = plt.subplot(gs[0,0])
@@ -462,7 +463,7 @@ def plotReport(trk):
     z = np.array([t['ds'] for t in trk])
     f = butter_lowpass_filtfilt(z, 5000, 50000)
     pts = np.array([x, y]).T.reshape(-1,1,2)
-    segments = np.hstack([pts[:-1], pts[1:]])     
+    segments = np.hstack([pts[:-1], pts[1:]])
 
     cmap = cmap_parula().parula
     coll = LineCollection(segments, cmap=cmap, linewidth=2)
@@ -483,7 +484,7 @@ def plotReport(trk):
 
     img = mpimg.imread(mapname)
 
-    implt = plt.imshow(img, zorder=0, extent=[xmin, xmax, ymin, ymax], aspect=ar, alpha=0.4) 
+    implt = plt.imshow(img, zorder=0, extent=[xmin, xmax, ymin, ymax], aspect=ar, alpha=0.4)
     cs = ax0.add_collection(coll)
 
     def fmt(x, pos):
@@ -497,7 +498,7 @@ def plotReport(trk):
             return('{:d}'.format(int(x)))
 
     add_colorbar(cs, format=ticker.FuncFormatter(fmt), label='Speed [mph]\n(Pace [mm:ss/mi])')
-    
+    cs.set_clim(vmin=1, vmax=10)
     # Final reset of the extents to focus on the track despite OSM's tiling.
     xmin = min(x); xmax = max(x)
     ymin = min(y); ymax = max(y)
@@ -505,12 +506,12 @@ def plotReport(trk):
     ydel = ymax - ymin
     xmin = xmin - 0.05 * xdel; xmax = xmax + 0.05 * xdel
     ymin = ymin - 0.05 * ydel; ymax = ymax + 0.05 * ydel
- 
+
     plt.xlim([xmin, xmax])
     plt.ylim([ymin, ymax])
- 
+
     ax0.set_xticks([])
-    ax0.set_yticks([]) 
+    ax0.set_yticks([])
 
     # Plot elevation map.
     ax1 = plt.subplot(gs[0,1])
@@ -520,7 +521,7 @@ def plotReport(trk):
     z = np.array([t['ele'] for t in trk])
     f = butter_lowpass_filtfilt(z, 5000, 50000)
     pts = np.array([x, y]).T.reshape(-1,1,2)
-    segments = np.hstack([pts[:-1], pts[1:]])     
+    segments = np.hstack([pts[:-1], pts[1:]])
 
     cmap = cmap_parula().parula
     coll = LineCollection(segments, cmap=cmap, linewidth=2)
@@ -541,7 +542,7 @@ def plotReport(trk):
 
     img = mpimg.imread(mapname)
 
-    implt = plt.imshow(img, zorder=0, extent=[xmin, xmax, ymin, ymax], aspect=ar, alpha=0.4) 
+    implt = plt.imshow(img, zorder=0, extent=[xmin, xmax, ymin, ymax], aspect=ar, alpha=0.4)
     cs = ax1.add_collection(coll)
 
     add_colorbar(cs, ax=ax1, label='Elevation [feet]')
@@ -553,12 +554,12 @@ def plotReport(trk):
     ydel = ymax - ymin
     xmin = xmin - 0.05 * xdel; xmax = xmax + 0.05 * xdel
     ymin = ymin - 0.05 * ydel; ymax = ymax + 0.05 * ydel
- 
+
     plt.xlim([xmin, xmax])
     plt.ylim([ymin, ymax])
- 
+
     ax1.set_xticks([])
-    ax1.set_yticks([]) 
+    ax1.set_yticks([])
 
     # Plot bottom speed / elevation line plot.
     ax2 = plt.subplot(gs[1,:])
@@ -571,14 +572,15 @@ def plotReport(trk):
     plt.ylabel('Speed [mph]')
 
     ax2.plot(x, f, 'k-')
- 
-    plt.xticks(np.arange(min(x), max(x)+1, 150.0))
 
-    def timeTicks(x, pos):                                                                                                                                                                                                                                                         
-        d = datetime.timedelta(seconds=x)                                                                                                                                                                                                                                          
-        return str(d)                                                                                                                                                                                                                                                              
-    formatter = matplotlib.ticker.FuncFormatter(timeTicks)                                                                                                                                                                                                                         
-    ax2.xaxis.set_major_formatter(formatter)  
+    plt.xticks(np.arange(min(x), max(x)+1, 150.0))
+    plt.ylim(ymin=0)
+
+    def timeTicks(x, pos):
+        d = datetime.timedelta(seconds=x)
+        return str(d)
+    formatter = matplotlib.ticker.FuncFormatter(timeTicks)
+    ax2.xaxis.set_major_formatter(formatter)
     for tick in ax2.get_xticklabels():
         tick.set_rotation(45)
 
@@ -622,34 +624,34 @@ if(__name__ == '__main__' and hasattr(main, '__file__')):
     parser.add_argument('--speed', '-s',
                         default = False,
                         action='store_true',
-                        help = 'plot speed data (default False)') 
+                        help = 'plot speed data (default False)')
     parser.add_argument('--speedmap', '-sm',
                         default = False,
                         action='store_true',
-                        help = 'plot speed map data (default False)') 
+                        help = 'plot speed map data (default False)')
     parser.add_argument('--elevationmap', '-em',
                         default = False,
                         action='store_true',
-                        help = 'plot elevation map data (default False)') 
+                        help = 'plot elevation map data (default False)')
     parser.add_argument('--speedelevation', '--elevationspeed', '-se', '-es',
                         default = False,
                         action='store_true',
-                        help = 'plot speed and elevation (default False)') 
+                        help = 'plot speed and elevation (default False)')
     parser.add_argument('--report', '-r',
                         default = False,
                         action='store_true',
-                        help = 'plot report (default False)') 
-    args = parser.parse_args()   
+                        help = 'plot report (default False)')
+    args = parser.parse_args()
 
     opts = [a for a in vars(args) if getattr(args,a)]
     assert(opts != ['infilename']), 'No options selected.'
 
     for infilename in args.infilename:
         assert(infilename != ''), 'No filename given.'
-    
+
         rawtrk = importGPX(infilename)
         trk = processRawTrack(rawtrk)
-        
+
         if(args.elevation):
             plt = plotElevation(trk)
             plt.savefig(infilename + '_elevation.png', dpi=300)
@@ -665,6 +667,6 @@ if(__name__ == '__main__' and hasattr(main, '__file__')):
         if(args.elevationmap):
             plt = plotElevationMap(trk)
             plt.savefig(infilename + '_elevationmap.png', dpi=500)
-        if(args.report):  
+        if(args.report):
             plt = plotReport(trk)
             plt.savefig(infilename + '_report.png', dpi=500)
