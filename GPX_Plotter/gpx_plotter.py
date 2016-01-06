@@ -612,6 +612,7 @@ if(__name__ == '__main__' and hasattr(main, '__file__')):
     """)
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('--infilename', '-f',
+                        nargs = '+',
                         default = '',
                         help = 'which GPS file to parse (default none)')
     parser.add_argument('--elevation', '-e',
@@ -640,30 +641,30 @@ if(__name__ == '__main__' and hasattr(main, '__file__')):
                         help = 'plot report (default False)') 
     args = parser.parse_args()   
 
-    infilename = args.infilename
-    assert(infilename != ''), 'No filename given.'
-
     opts = [a for a in vars(args) if getattr(args,a)]
     assert(opts != ['infilename']), 'No options selected.'
+
+    for infilename in args.infilename:
+        assert(infilename != ''), 'No filename given.'
     
-    rawtrk = importGPX(infilename)
-    trk = processRawTrack(rawtrk)
-    
-    if(args.elevation):
-        plt = plotElevation(trk)
-        plt.savefig(infilename + '_elevation.png', dpi=300)
-    if(args.speed):
-        plt = plotSpeed(trk)
-        plt.savefig(infilename + '_speed.png', dpi=300)
-    if(args.speedelevation):
-        plt = plotSpeedElevation(trk)
-        plt.savefig(infilename + '_speedelevation.png', dpi=300)
-    if(args.speedmap):
-        plt = plotSpeedMap(trk)
-        plt.savefig(infilename + '_speedmap.png', dpi=500)
-    if(args.elevationmap):
-        plt = plotElevationMap(trk)
-        plt.savefig(infilename + '_elevationmap.png', dpi=500)
-    if(args.report):  
-        plt = plotReport(trk)
-        plt.savefig(infilename + '_report.png', dpi=500)
+        rawtrk = importGPX(infilename)
+        trk = processRawTrack(rawtrk)
+        
+        if(args.elevation):
+            plt = plotElevation(trk)
+            plt.savefig(infilename + '_elevation.png', dpi=300)
+        if(args.speed):
+            plt = plotSpeed(trk)
+            plt.savefig(infilename + '_speed.png', dpi=300)
+        if(args.speedelevation):
+            plt = plotSpeedElevation(trk)
+            plt.savefig(infilename + '_speedelevation.png', dpi=300)
+        if(args.speedmap):
+            plt = plotSpeedMap(trk)
+            plt.savefig(infilename + '_speedmap.png', dpi=500)
+        if(args.elevationmap):
+            plt = plotElevationMap(trk)
+            plt.savefig(infilename + '_elevationmap.png', dpi=500)
+        if(args.report):  
+            plt = plotReport(trk)
+            plt.savefig(infilename + '_report.png', dpi=500)
