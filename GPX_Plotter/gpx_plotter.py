@@ -265,7 +265,9 @@ def getOSM(xmin, xmax, ymin, ymax):
 
     mapname = 'map_{:}_{:}-{:}_{:}-{:}.png'.format(zoom, xtmin, xtmax, ytmin, ytmax)
 
-    ar = (ytmax-ytmin)/(xtmax-xtmin)
+    ar = (ymax-ymin)/(xmax-xmin)
+    art = (ytmax-ytmin)/(xtmax-xtmin)
+    ar = art / ar
 
     if(not os.path.exists(mapname)):
         # Retreive images from OpenStreetMap.org
@@ -336,12 +338,13 @@ def plotSpeedMap(trk, smoothed=True):
     fig, ax = plt.subplots()
 
     ax = plt.gca()
-    ax.set_aspect(ar)
 
     img = mpimg.imread(mapname)
 
     implt = plt.imshow(img, zorder=0, extent=[xmin, xmax, ymin, ymax], aspect=ar, alpha=0.4)
     cs = ax.add_collection(coll)
+
+#   ax.set_aspect(1/ar, 'box-forced')
 
     def fmt(x, pos):
         import math
