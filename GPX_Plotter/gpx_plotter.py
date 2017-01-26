@@ -1,4 +1,4 @@
-#!/sw/bin/python3.4
+#!/usr/bin/env python3
 
 # Configure plotting.
 import datetime
